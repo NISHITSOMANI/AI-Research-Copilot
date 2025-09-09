@@ -1,0 +1,59 @@
+Title: Machine Learning Basics — Paradigms and Key Algorithms
+
+Summary: A practical overview of machine learning paradigms (supervised, unsupervised, reinforcement learning) and staple algorithms. Emphasizes problem framing, data splitting, bias–variance, and when to use each method.
+
+Tags: ml, supervised, unsupervised, reinforcement-learning, classification, regression, clustering, basics
+
+---
+
+1) Problem framing
+- Identify target: regression (continuous), classification (categorical), ranking, structured prediction.
+- Data splits: train/validation/test; use stratification for classification.
+- Leakage avoidance: ensure temporal/order splits when applicable; do feature engineering only with train folds.
+
+2) Supervised learning
+- Linear/Logistic Regression: baselines; interpretable coefficients; regularize with L1/L2/ElasticNet.
+- Decision Trees: non-linear rules, easy to interpret but overfit without control.
+- Random Forests: ensembles that reduce variance; robust to outliers and scaling; strong tabular baselines.
+- Gradient Boosting (XGBoost/LightGBM/CatBoost): top performance on many tabular tasks; tune learning rate, depth, number of trees.
+- SVMs: margin maximization; kernels for non-linearity; less common at very large scale.
+- Neural Networks: flexible function approximators; require larger data and careful regularization.
+
+3) Unsupervised learning
+- Clustering: k-means (requires k), hierarchical (dendrograms), DBSCAN/HDBSCAN (density-based; find arbitrary shapes; handle noise).
+- Dimensionality Reduction: PCA (linear), t-SNE/UMAP (non-linear for visualization), autoencoders.
+- Topic Modeling: LDA, NMF; modern alternative: embeddings + clustering.
+
+4) Reinforcement learning (RL)
+- Agent interacts with environment to maximize cumulative reward; core components: state, action, policy, reward, transition.
+- Methods: value-based (Q-learning, DQN), policy gradients (REINFORCE), actor–critic (A2C/A3C, PPO), model-based RL.
+- Use cases: games, robotics, recommendation, operations research.
+
+5) Model selection and validation
+- Cross-validation: k-fold, stratified k-fold, time-series split; use CV for robust estimates.
+- Hyperparameter tuning: grid/random search; Bayesian optimization; early stopping.
+
+6) Bias–variance trade-off
+- High bias: underfitting; high variance: overfitting; regularization and data augmentation mitigate variance.
+- Learning curves: plot train/test error vs data size to diagnose regime.
+
+7) Feature engineering and preprocessing
+- Scaling: standardize for algorithms sensitive to scale (SVM, kNN, PCA); tree methods often invariant.
+- Encoding: one-hot, target encoding (careful with leakage), embeddings for high cardinality.
+- Missing values: imputation (mean/median/model-based); indicator flags.
+
+8) Evaluation
+- Classification: accuracy, precision/recall/F1, ROC/PR; multi-class averaging.
+- Regression: MSE/RMSE, MAE, R^2; consider pinball loss for quantile regression.
+- Ranking: NDCG, MRR; business KPIs.
+
+9) Practical guidance
+- Start simple: linear or tree-based baselines; set a strong bar before deep learning.
+- Address data quality first: garbage-in, garbage-out.
+- Monitor distribution shift; retrain on fresh data; maintain feature pipelines.
+
+Citations
+- Hastie, Tibshirani, Friedman, 2009. The Elements of Statistical Learning.
+- Géron, 2019. Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow.
+- Chen & Guestrin, 2016. XGBoost: A Scalable Tree Boosting System. KDD.
+- Breiman, 2001. Random Forests. Machine Learning.

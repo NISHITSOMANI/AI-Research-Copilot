@@ -1,0 +1,25 @@
+Title: Math Primer — Linear Algebra and Probability for ML
+
+Summary: Quick references for core math in ML: vector spaces, norms, SVD, eigenvalues, gradients/Jacobians, and probability basics.
+
+Tags: math, linear-algebra, probability, svd, gradients, eigenvalues
+
+---
+
+1) Linear algebra
+- Vectors/matrices/tensors; inner/outer products; norms (L1/L2/∞); matrix calculus basics (∂Ax/∂x = A).
+- Decompositions: SVD (UΣV^T), eigenvalues/eigenvectors; PCA via SVD.
+
+2) Optimization
+- Gradients and Jacobians; convexity; line search; Adam/SGD with momentum.
+
+3) Probability
+- Random variables, expectation/variance; Bernoulli/Binomial/Normal/Logistic; Bayes’ rule; conditional independence.
+
+4) Concentration
+- Hoeffding/Chernoff bounds intuition; CLT; law of large numbers.
+
+Citations
+- Strang, 2016. Linear Algebra and Learning from Data.
+- Murphy, 2012. Machine Learning: A Probabilistic Perspective.
+- Boyd & Vandenberghe, 2004. Convex Optimization.

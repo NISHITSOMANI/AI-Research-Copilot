@@ -1,0 +1,40 @@
+Title: Transfer Learning & Parameter-Efficient Fine-Tuning (PEFT): LoRA and Adapters
+
+Summary: How to adapt large pretrained models efficiently using PEFT techniques. Covers LoRA, adapters, prefix/prompt tuning, and practical recipes for low-GPU settings.
+
+Tags: peft, lora, adapters, fine-tuning, transfer-learning, prefix-tuning, prompt-tuning
+
+---
+
+1) Why PEFT
+- Full fine-tuning updates all parameters (billions), which is compute/memory intensive and risks catastrophic forgetting.
+- PEFT freezes most weights and learns small additional parameters, retaining base knowledge while reducing cost.
+
+2) LoRA (Low-Rank Adaptation)
+- Decomposes weight updates ΔW ≈ A·B with rank r << d, injecting trainable low-rank matrices into attention and MLP layers.
+- Benefits: orders-of-magnitude fewer trainable params; easy to merge/unmerge; supports composition of multiple LoRAs.
+- Key hyperparameters: rank r (4–64), alpha (scaling), dropout; target modules (q_proj, v_proj, o_proj, up/down).
+
+3) Adapters
+- Insert small bottleneck layers within transformer blocks; only adapter params are trained.
+- Variants: Houlsby and Pfeiffer adapters differ in placement and bottleneck size.
+- Pros: modular, per-task toggling; Cons: small inference overhead if not merged.
+
+4) Prefix/Prompt Tuning
+- Learn continuous vectors (virtual tokens) prepended to inputs or key–value states; trainable parameters are small and shared.
+- Effective for generation tasks where conditioning is crucial.
+
+5) Practical recipes
+- Start with LoRA on attention Q/V projections; r=8–16, alpha≈16–64; train with 1–8 A100/3090 or even CPU for small models.
+- Use 4/8-bit optimizer states (bitsandbytes) to fit larger models.
+- For classification/reranking, adapters can be strong with minimal latency impact.
+
+6) Evaluation and deployment
+- Keep a frozen baseline; compare accuracy and robustness; watch for overfitting on small datasets.
+- Merge LoRA weights for export to ONNX/TensorRT if needed; or keep separate for modularity.
+
+Citations
+- Hu et al., 2021. LoRA: Low-Rank Adaptation of Large Language Models. arXiv:2106.09685.
+- Houlsby et al., 2019. Parameter-Efficient Transfer Learning for NLP. arXiv:1902.00751.
+- Lester et al., 2021. The Power of Scale for Parameter-Efficient Prompt Tuning. arXiv:2104.08691.
+- Pfeiffer et al., 2020. AdapterHub: A Framework for Adapting Transformers. arXiv:2007.07779.

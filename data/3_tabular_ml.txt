@@ -1,0 +1,27 @@
+Title: Tabular ML Primer — Strong Baselines and Feature Pipelines
+
+Summary: Practical guidance for tabular datasets. Highlights tree ensembles (XGBoost/LightGBM/CatBoost), leakage prevention, categorical encoding, and calibration.
+
+Tags: tabular, xgboost, lightgbm, catboost, leakage, encoding, calibration
+
+---
+
+1) Baselines first
+- Start with regularized linear/logistic regression and tree ensembles; deep learning rarely wins without lots of data/features.
+
+2) Encodings
+- One-hot for low-cardinality; target/leave-one-out for high-cardinality (beware leakage); CatBoost handles categorical features natively.
+
+3) Missing values and scaling
+- Use model-aware handling (CatBoost) or impute; standardize for linear/SVM/kNN.
+
+4) Validation
+- Stratified/time-series splits; group k-fold for entity leakage.
+
+5) Calibration
+- Platt scaling/Isotonic; assess with reliability plots and Brier score.
+
+Citations
+- Chen & Guestrin, 2016. XGBoost. KDD.
+- Ke et al., 2017. LightGBM. NeurIPS.
+- Dorogush et al., 2018. CatBoost. NeurIPS.

@@ -1,0 +1,26 @@
+Title: Code Models & Evaluation — From GPT-Code to Fill-in-the-Middle
+
+Summary: Overview of code LLMs, training data, objectives, and evaluation. Discusses pass@k, unit-test harnesses, and safety.
+
+Tags: code, llm, evaluation, passk, unit-tests, fill-in-the-middle, fmim
+
+---
+
+1) Model families
+- Codex/GPT-4 class (API), open models (StarCoder, CodeLlama, DeepSeek-Coder, Phi-3-mini-128k-instruct for code tasks).
+
+2) Training objectives
+- Causal LM on source code; infilling (fill-in-the-middle) for better editing and completion; multi-file context via special separators.
+
+3) Evaluation
+- pass@k: probability that at least one of k samples passes unit tests; depends on sampling temperature and test quality.
+- HumanEval, MBPP, MultiPL-E; for enterprise, create internal task suites with unit tests.
+
+4) Best practices
+- Constrain output to the function body; provide signatures and docstrings; use deterministic decoding for small edits.
+- Sandbox execution; rate limit; redact secrets.
+
+Citations
+- Chen et al., 2021. Evaluating Large Language Models Trained on Code. arXiv:2107.03374.
+- Li et al., 2023. StarCoder. arXiv:2305.06161.
+- Roziere et al., 2023. Code Llama. arXiv:2308.12950.

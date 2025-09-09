@@ -1,0 +1,76 @@
+Title: NLP Overview — Tokenization, Embeddings, and Modern Architectures
+
+Summary: This document introduces Natural Language Processing (NLP) with a focus on tokenization approaches, embeddings (static vs contextual), and modern transformer-based architectures such as BERT, GPT, and T5. It clarifies how context is handled, why subword tokenization is standard, and when to prefer different model families. Practical guidance and citations are included.
+
+Tags: nlp, tokenization, embeddings, transformers, bert, gpt, t5, context, subword, overview
+
+---
+
+1) What is NLP and why it changed recently
+- NLP studies how to make computers understand and generate human language.
+- The deep learning shift (2013–2018) replaced feature engineering with learned representations (word2vec, GloVe) and then transformers.
+- Transformers enabled scaling, long-range dependency modeling via self-attention, and transfer learning at unprecedented levels.
+
+2) Tokenization: from words to subwords
+- Word-level tokenization: simple but leads to out-of-vocabulary (OOV) issues and very large vocabularies.
+- Character-level tokenization: no OOV, but sequences get long and less semantically meaningful per token.
+- Subword tokenization (standard): balances vocabulary size and coverage; splits rare words into meaningful pieces.
+  - Byte-Pair Encoding (BPE): merges frequent character pairs into subwords.
+  - WordPiece: similar to BPE, used by BERT.
+  - SentencePiece/Unigram: operates on raw text bytes; used by T5 and many multilingual models.
+- Practical tips
+  - Keep vocabulary stable across training/inference.
+  - In multilingual settings, prefer SentencePiece with a sufficiently large vocab (e.g., 32k–64k) to reduce fragmentation.
+  - For code, byte-level BPE reduces OOV.
+
+3) Embeddings: static vs contextual
+- Static embeddings (word2vec, GloVe): single vector per word type regardless of context; fast but ambiguous ("bank" has one vector).
+- Contextual embeddings (ELMo, BERT, GPT, T5): representation depends on the sentence; resolves polysemy and captures syntax/semantics better.
+- Sentence embeddings: compress a sentence/paragraph into a fixed vector; typically built via specialized training (e.g., contrastive, siamese, or instructor models) for retrieval, clustering, and semantic search.
+
+4) Modern transformer families and their differences
+- Encoder-only (e.g., BERT, RoBERTa): bidirectional masked language modeling; strong at understanding, classification, NER, QA (extractive), reranking.
+- Decoder-only (e.g., GPT, Llama, Mistral, Phi): autoregressive generation; excels at text generation, dialogue, code completion, reasoning; can also be adapted for retrieval-augmented generation (RAG).
+- Encoder–decoder (e.g., T5, FLAN-T5, MT5, BART): sequence-to-sequence; strong for translation, summarization, instruction following; easy to prepend task prefixes ("summarize: ...").
+- Practical mapping
+  - Classification/reranking: encoder-only or cross-encoder.
+  - Free-form generation: decoder-only or encoder–decoder (seq2seq).
+  - Multitask with prompts: T5-style encoder–decoder.
+
+5) Attention and context handling basics
+- Self-attention computes token–token interactions with O(n^2) memory/time in sequence length (n).
+- Positional encodings (sinusoidal or learned) or rotary embeddings (RoPE) provide order information.
+- Long-context strategies include sliding-window attention, sparse attention, ALiBi, linear attention, and retrieval-based methods.
+
+6) Pretraining, fine-tuning, and instruction tuning
+- Pretraining: learn general language patterns from large corpora (causal LM, masked LM, span corruption).
+- Supervised fine-tuning: adapt to specific tasks/datasets.
+- Instruction tuning: train on instruction–response pairs to improve following directions.
+- RLHF/DPO: align model outputs with human preferences.
+
+7) Evaluation and common pitfalls
+- Metrics: accuracy/F1 for classification, ROUGE/BLEU for summarization/translation, BERTScore for semantic similarity.
+- Pitfalls: data leakage, domain shift, spurious correlations, and overfitting stopwords/patterns.
+- Always keep a held-out test set and use strong baselines.
+
+8) Tooling and ecosystem
+- Tokenizers: Hugging Face Tokenizers, SentencePiece.
+- Frameworks: PyTorch, TensorFlow, JAX/Flax.
+- Libraries: Hugging Face Transformers, Sentence-Transformers, spaCy, NLTK.
+
+9) When to use which model
+- Compact classifiers: distilBERT, MiniLM for on-device or low-latency.
+- Retrieval embeddings: all-MiniLM-L6-v2 or E5-small; for multilingual, LaBSE or multilingual-e5.
+- Generation: small LLMs (Llama 3.1/3.2, Mistral) where privacy/cost matter; GPT-4 class for complex reasoning (via API).
+
+10) Ethical and safety considerations
+- Bias can be amplified by pretraining data; include fairness checks and guardrails.
+- Hallucinations in generation require retrieval augmentation, verification, and conservative prompting.
+
+Citations
+- Vaswani et al., 2017. Attention Is All You Need. arXiv:1706.03762.
+- Devlin et al., 2018. BERT: Pre-training of Deep Bidirectional Transformers. arXiv:1810.04805.
+- Raffel et al., 2019. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer (T5). arXiv:1910.10683.
+- Brown et al., 2020. Language Models are Few-Shot Learners (GPT-3). arXiv:2005.14165.
+- Xue et al., 2021. mT5: A Massively Multilingual Pretrained Text-to-Text Transformer. arXiv:2010.11934.
+- Wolf et al., 2020. Transformers: State-of-the-Art Natural Language Processing. arXiv:1910.03771 / Hugging Face docs.

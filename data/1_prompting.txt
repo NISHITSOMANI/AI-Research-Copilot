@@ -1,0 +1,45 @@
+Title: Prompting & Prompt Engineering — Patterns and Best Practices
+
+Summary: Practical prompting techniques for instruction-following and RAG settings. Covers system prompts, decomposition, few-shot design, constraints, and evaluation.
+
+Tags: prompting, prompt-engineering, instructions, few-shot, chain-of-thought, constraints, evaluation
+
+---
+
+1) Principles
+- Be explicit: define the role, constraints, and output format (JSON, bullets) in the system or first turn.
+- Ground the model: provide relevant context snippets and require citations.
+- Prefer simple, testable instructions over clever tricks.
+
+2) Pattern library
+- Task prefixing: "Summarize:", "Classify:", "Explain step-by-step:".
+- Few-shot exemplars: 2–5 high-quality examples; match style and edge cases.
+- Chain-of-thought (CoT): ask for reasoning when safe; or use hidden CoT with output extraction.
+- Self-consistency/majority vote: sample multiple reasoning paths and aggregate.
+- Planning then acting: first list steps, then execute.
+- Toolformer-style: teach the model to call tools or APIs via labeled examples.
+
+3) Output controls
+- Constrain length, style, tone; require structured outputs (JSON schema) and cite sources.
+- Ask for abstention: "If unsure, say 'I don't know'" to reduce hallucinations.
+
+4) Debugging prompts
+- Identify failure modes: verbosity, missing citations, off-topic content.
+- Tighten constraints, add negative examples (what not to do), or decompose into sub-tasks.
+- Use logit bias or stop sequences if the API supports them.
+
+5) Evaluation
+- Create a prompt test suite with representative inputs and expected patterns.
+- Track metrics: task success rate, groundedness, brevity, and policy adherence.
+- Run adversarial tests (ambiguous, misleading instructions) to probe robustness.
+
+6) RAG-specific guidance
+- Separate retrieval instruction from answer constraints.
+- Use identifiers in the context and require citing them; verify claims against context.
+- Ensure prompt fits within context window; truncate by score.
+
+Citations
+- Wei et al., 2022. Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. arXiv:2201.11903.
+- Kojima et al., 2022. Large Language Models are Zero-Shot Reasoners. arXiv:2205.11916.
+- Brown et al., 2020. Language Models are Few-Shot Learners. arXiv:2005.14165.
+- Hugging Face Prompt Engineering guides.

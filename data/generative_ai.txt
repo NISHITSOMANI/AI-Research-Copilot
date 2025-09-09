@@ -1,0 +1,70 @@
+Title: Generative AI — Diffusion Models, GANs, and Variational Autoencoders (VAEs)
+
+Abstract:
+This document reviews three key generative model families—diffusion models, Generative Adversarial Networks (GANs), and VAEs—comparing training objectives, sample quality, likelihood, and stability.
+
+Introduction:
+Generative modeling aims to learn the data distribution to produce new samples, perform reconstruction, or enable downstream tasks like editing and conditional generation.
+
+Core Concepts / Methods:
+1) Variational Autoencoders (VAEs)
+   - Objective: Maximize ELBO; learn latent variable model with encoder (q) and decoder (p).
+   - Pros: Likelihood-based; stable training; provides meaningful latent space for interpolation.
+   - Cons: Blurry samples due to pixel-wise decoders; trade-off between reconstruction and KL.
+
+2) GANs
+   - Objective: Minimax game between generator (G) and discriminator (D).
+   - Pros: Sharp, high-fidelity samples.
+   - Cons: Training instability, mode collapse; sensitive to hyperparameters.
+   - Variants: WGAN-GP (improved stability), StyleGAN (controllable high-res synthesis), CycleGAN (unpaired translation).
+
+3) Diffusion Models
+   - Idea: Learn to denoise data from progressively noised versions; reverse a diffusion process.
+   - Pros: Excellent sample quality and diversity; stable training.
+   - Cons: Slow sampling (many steps); accelerated samplers and distillation mitigate cost.
+   - Variants: DDPM, DDIM, classifier-free guidance; latent diffusion (e.g., Stable Diffusion) for efficiency.
+
+Applications:
+- VAEs: Anomaly detection (reconstruction error), representation learning.
+- GANs: Photorealistic image synthesis, super-resolution, domain translation.
+- Diffusion: Text-to-image generation, inpainting/outpainting, audio generation.
+
+Advanced Topics and Practical Guidance:
+1) Likelihood vs. Sample Quality
+   - VAEs optimize a tractable bound on likelihood but may produce blur due to pixel-wise losses.
+   - GANs optimize an adversarial objective with implicit density; sharp samples but no explicit likelihood.
+   - Diffusion approximates score matching; samples are high-quality and diverse but slower to generate.
+
+2) Conditioning and Control
+   - Conditional Models: Class-conditional GANs, conditional VAEs, and classifier-free guidance for diffusion.
+   - Guidance Scale: Balances fidelity and diversity in diffusion; too high causes mode contraction.
+   - ControlNets and LoRA adapters enable controlling layout, edges, or style from conditioning maps.
+
+3) Evaluation of Generative Models
+   - Image Metrics: FID, IS, KID; beware overfitting and dataset biases.
+   - Text Metrics: Perplexity for likelihood models; human eval for coherence and factuality.
+   - Editability/Consistency: Assess prompt adherence and content safety constraints.
+
+4) Safety, Ethics, and Watermarking
+   - Risks: Harmful, biased, or copyrighted content; training data provenance concerns.
+   - Mitigations: Safety classifiers, prompt filtering, and post-generation audits.
+   - Watermarking: Embed detectable signals in outputs; robustness vs. removal attacks is an open area.
+
+5) Diffusion Acceleration and Distillation
+   - Sampler Improvements: Fewer steps via higher-order solvers (DDIM, DPM-Solver), stochastic sampling schedules.
+   - Model Distillation: Train a student to mimic multi-step diffusion in few steps; improves latency.
+   - Latent Diffusion: Operate in compressed latent space (e.g., VAE encoder) for speed and memory.
+
+6) Latent and Discrete Representations
+   - VQ-VAE: Discrete codebooks enable autoregressive transformers over code indices; good for images/audio.
+   - Hierarchical Latents: Multi-scale latents improve global structure and fine details.
+   - Hybrid Systems: Use VAEs for latents and diffusion for high-fidelity decoding.
+
+7) Practical Recipes
+   - Data Curation: High-quality, deduplicated datasets improve fidelity and reduce artifacts.
+   - Augmentation: Color jitter and cutouts for GAN discriminator robustness; caption augmentation for text-to-image.
+   - Training Stability: Spectral normalization, gradient penalty, and EMA of generator weights for GANs.
+   - Serving: Cache popular prompts; batch requests; choose precision/quantization to fit latency budgets.
+
+Conclusion:
+VAEs offer principled likelihood modeling; GANs deliver sharpness; diffusion models currently set the bar for controllable, high-quality generation. Practical systems often combine ideas (e.g., VQ-VAE + transformers or diffusion) to balance fidelity, speed, and control. Invest in evaluation, safety, and acceleration techniques to deliver reliable and responsible generative applications.

@@ -1,0 +1,33 @@
+Title: Example Projects & Architecture Diagrams — RAG and Search+LLM
+
+Summary: Reference architectures for a production-grade RAG pipeline and a Search+LLM application. Includes components, data flow, and ops considerations.
+
+Tags: architecture, rag, search, pipelines, diagrams, ops
+
+---
+
+1) RAG pipeline (high-level components)
+- Ingestor: document parsers (PDF, HTML), cleaners, chunker, metadata enricher.
+- Embedder: batch embedding with GPU; caching and deduplication.
+- Index: FAISS/HNSW/pgvector; metadata store (Postgres/Elastic/Qdrant).
+- Retriever: ANN search; hybrid with BM25; filters.
+- Reranker (optional): cross-encoder to re-order top candidates.
+- Generator: LLM with prompt templates; citation enforcement.
+- Orchestrator/API: request routing, caching, rate limiting, logging.
+- Monitoring: metrics, tracing, drift detection.
+
+2) Search + LLM app
+- Query → hybrid retrieval → aggregation → optional LLM summarization with citations.
+- Useful when verbatim documents are desired but summaries help users.
+
+3) Data flow and storage
+- Object store for raw docs; structured DB for metadata; vector index for embeddings.
+- Versioning: snapshot corpora and indexes; reproducible builds.
+
+4) Ops highlights
+- Autoscaling based on QPS; warm pools of model workers; GPU/CPU mix.
+- Blue/green index deployments; backfill jobs for re-embeddings.
+
+Citations
+- Haystack, LlamaIndex, LangChain docs for orchestration patterns.
+- FAISS and Elasticsearch documentation.

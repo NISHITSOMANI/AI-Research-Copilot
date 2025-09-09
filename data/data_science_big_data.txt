@@ -1,0 +1,83 @@
+Title: Data Science and Big Data — ETL, Feature Engineering, and Data Cleaning
+
+Abstract:
+This document summarizes practical data engineering and data science preprocessing: extracting/transforming/loading (ETL), feature engineering, and data cleaning strategies for reliable ML pipelines.
+
+Introduction:
+Quality data pipelines underpin robust ML systems. Handling scale, drift, and missingness requires systematic techniques that combine engineering and statistical insight.
+
+Core Concepts / Methods:
+1) ETL and Data Pipelines
+   - Ingestion: Batch (files, databases) and streaming (Kafka, Kinesis).
+   - Storage: Data lakes (S3/HDFS), warehouses (Snowflake/BigQuery), lakehouses.
+   - Orchestration: Airflow, Dagster, Prefect for scheduling and dependency management.
+
+2) Data Cleaning
+   - Missing data: Imputation (mean/median/knn/mice), deletion, indicator flags.
+   - Outliers: Robust scalers, winsorization, isolation forest.
+   - Consistency: Schema validation (Great Expectations), unit tests for data.
+
+3) Feature Engineering
+   - Numerical: Scaling, binning, interactions, polynomial terms.
+   - Categorical: One-hot, target encoding, embeddings for high cardinality.
+   - Text: TF-IDF, n-grams, pretrained embeddings.
+   - Images: Color/texture stats, augmentations; or deep features from CNNs.
+
+4) Big Data Considerations
+   - Distributed compute: Spark, Dask, Ray for large-scale processing.
+   - Sampling and sketching: HyperLogLog, reservoir sampling for quick estimates.
+   - Data versioning: DVC/LakeFS; reproducibility and lineage.
+
+Applications:
+- ETL + ML: Real-time fraud detection via streaming features.
+- Feature stores: Centralized feature definitions for online/offline parity.
+- Monitoring: Data drift and quality checks to maintain model performance.
+
+Advanced Topics and Practical Guidance:
+1) Data Modeling and Storage Layouts
+   - Schema-on-write (warehouses) vs. schema-on-read (lakes) vs. lakehouse; choose based on agility vs. governance needs.
+   - Partitioning and Clustering: Partition by time or high-cardinality keys; cluster for predicate pushdown.
+   - File Formats: Parquet/ORC with columnar compression; add statistics for faster queries.
+
+2) Feature Stores
+   - Purpose: Central repository for features with definitions, lineage, and online/offline consistency.
+   - Components: Offline store (batch), online store (low-latency), transformation registry.
+   - Point-in-time Correctness: Prevent leakage by joining only data available at prediction time.
+
+3) Data Quality and Validation
+   - Expectations: Declarative checks (null ratios, ranges, referential integrity) using Great Expectations or Deequ.
+   - Anomaly Detection: Profile drift in distributions and embeddings; alerting thresholds.
+   - CI for Data: Run validation in pipelines; block promotions on failures.
+
+4) Scalable Feature Engineering
+   - Windowed Aggregations: Tumbling/sliding windows on streams for recency-sensitive signals.
+   - High-cardinality Categorical: Hashing tricks, entity embeddings, frequency capping.
+   - Text and Images at Scale: Precompute embeddings with batch jobs; cache and version.
+
+5) Streaming ML and Online Features
+   - Lambda vs. Kappa Architecture: Dual batch/stream vs. stream-only; pick per complexity tolerance.
+   - State Management: Exactly-once semantics and watermarking to handle late/out-of-order events.
+   - Real-time Models: Online learning or micro-batch updates; feature freshness SLAs.
+
+6) Governance, Privacy, and Compliance
+   - Access Control: Row/column-level policies; tokenization/masking for PII.
+   - Privacy: Differential privacy for releases; federated learning to keep data local.
+   - Lineage: Track provenance; satisfy audits with reproducible runs and signed artifacts.
+
+7) MLOps Integration
+   - Version Everything: Data (DVC/LakeFS), code, models; immutable artifacts.
+   - Reproducibility: Deterministic seeds; snapshot environments; lock dependency versions.
+   - Orchestration + Model Registry: Automate training; register and promote models through stages.
+
+8) Monitoring and Reliability
+   - Metrics: Data freshness, pipeline success rates, feature availability; SLOs with alerting.
+   - Canary Deployments: Release new feature pipelines to a subset; compare metrics.
+   - Backfills and Replays: Idempotent pipelines allow reprocessing without duplication.
+
+9) Playbooks and Incident Response
+   - Runbooks: Steps to triage data incidents (schema drift, missing partitions, corrupted files).
+   - Rollback: Keep prior feature views for rapid revert.
+   - Postmortems: Document root causes and fixes; update validation rules.
+
+Conclusion:
+Robust ML depends on disciplined data engineering and thoughtful feature design. Invest in reproducible pipelines, validation checks, and monitoring to ensure models survive beyond notebooks and into production. Favor feature stores for consistency, enforce point-in-time correctness, and integrate governance early to accelerate safe iteration.

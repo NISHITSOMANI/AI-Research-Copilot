@@ -1,0 +1,33 @@
+Title: Vision Models Overview — CNNs to Vision Transformers (ViT)
+
+Summary: A primer on computer vision models from classic CNNs to Vision Transformers. Explains inductive biases, patch embeddings, data requirements, and transfer learning in vision.
+
+Tags: vision, cnn, vit, transformers, computer-vision, transfer-learning
+
+---
+
+1) CNN foundations
+- Convolutions capture local spatial patterns with weight sharing and translation equivariance.
+- Architectures: VGG (deep stacks), ResNet (skip connections to ease optimization), EfficientNet (compound scaling).
+
+2) From CNNs to transformers
+- CNNs embed strong locality bias; Transformers trade this for global attention and scalability with data.
+- ViT splits images into fixed-size patches (e.g., 16x16), linearly projects to tokens, adds positional embeddings, then uses standard transformer blocks.
+
+3) ViT variants and hybrids
+- DeiT adds distillation for data efficiency.
+- Swin Transformer introduces shifted windows for hierarchical features with linear complexity.
+- ConvNeXt modernizes CNNs to compete with ViTs.
+
+4) Training considerations
+- ViTs need lots of data or strong augmentation/regularization (Mixup, CutMix, RandAugment); or use pretraining on large datasets (ImageNet-21k, JFT-300M).
+
+5) Transfer learning
+- Fine-tune pretrained backbones on target tasks (classification, detection, segmentation) using task-specific heads (e.g., Mask R-CNN, DETR for detection/segmentation with transformers).
+
+Citations
+- He et al., 2016. Deep Residual Learning (ResNet).
+- Dosovitskiy et al., 2020. An Image is Worth 16x16 Words (ViT). arXiv:2010.11929.
+- Touvron et al., 2021. DeiT. arXiv:2012.12877.
+- Liu et al., 2021. Swin Transformer. arXiv:2103.14030.
+- Tan & Le, 2019. EfficientNet. arXiv:1905.11946.

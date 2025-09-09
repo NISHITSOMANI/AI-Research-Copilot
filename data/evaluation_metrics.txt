@@ -1,0 +1,83 @@
+Title: Evaluation Metrics — Accuracy, Precision, Recall, F1, and ROC-AUC
+
+Abstract:
+This document provides practical guidance on choosing and interpreting classification metrics, especially under class imbalance and varying decision thresholds.
+
+Introduction:
+Selecting the right metric is crucial for aligning model performance with business goals. Accuracy alone can be misleading; precision–recall trade-offs matter in many domains.
+
+Core Concepts / Methods:
+1) Accuracy
+   - Definition: (TP + TN) / (TP + TN + FP + FN).
+   - Pitfall: Inflated under heavy class imbalance.
+
+2) Precision and Recall
+   - Precision: TP / (TP + FP) — of predicted positives, how many are correct.
+   - Recall (Sensitivity): TP / (TP + FN) — of actual positives, how many were found.
+   - Trade-off: Adjustable via decision threshold; higher precision often lowers recall and vice versa.
+
+3) F1 Score
+   - Harmonic mean of precision and recall; balances both errors.
+   - Useful when classes are imbalanced and both FP and FN are costly.
+
+4) ROC and AUC
+   - ROC curve: TPR vs. FPR across thresholds; AUC is threshold-agnostic ranking quality.
+   - Limitation: Can be optimistic under strong imbalance; PR curves are more informative when positives are rare.
+
+5) Calibration and Other Metrics
+   - Brier score, log loss: Assess probability quality, not just ranking.
+   - Confusion matrix: Diagnostic view across classes.
+   - Multi-class: Macro/micro averaging; per-class F1.
+
+Applications:
+- Healthcare screening: Prioritize high recall to catch positive cases; then raise precision via confirmatory tests.
+- Fraud detection: Balance precision and recall to minimize false investigations and misses.
+- Search ranking: AUC/PR-AUC and calibration for user experience.
+
+Extended Topics and Practical Guidance:
+1) Precision–Recall (PR) Curves and PR-AUC
+   - Better than ROC when positives are rare; focuses on performance on the positive class.
+   - PR-AUC summarizes across thresholds; inspect curve shape for head vs. tail performance.
+
+2) Threshold Selection
+   - Business-aligned thresholds: Optimize Fβ where β reflects recall importance; or maximize expected utility using cost matrices.
+   - Calibrated probabilities enable cost-sensitive decisioning; avoid fixed 0.5 unless justified.
+
+3) Multi-class and Multi-label
+   - Macro vs. Micro Averaging: Macro treats classes equally; micro aggregates counts—choose per business need.
+   - One-vs-Rest and per-class PR curves reveal small-class performance.
+   - Multi-label: Use subset accuracy, Hamming loss, and example-based F1; evaluate label cardinality effects.
+
+4) Regression Metrics
+   - RMSE/MAE: Scale-sensitive vs. robust to outliers; MAE is in same units and easier to explain.
+   - R² and Adjusted R² for explanatory power; check residual plots for heteroskedasticity.
+   - Quantile loss (Pinball) for probabilistic forecasts; coverage metrics for prediction intervals.
+
+5) Ranking and Recommender Metrics
+   - NDCG, MAP, Recall@K: Evaluate top-K relevance; diversity/novelty metrics for user satisfaction.
+   - Offline vs. Online: Pair offline ranking metrics with A/B tests; beware of dataset bias.
+
+6) Calibration and Decisioning
+   - Reliability Diagrams: Compare predicted probability buckets to empirical frequencies.
+   - Calibration Methods: Platt scaling, isotonic regression, temperature scaling; recalibrate after distribution shift.
+   - Uplift modeling: Evaluate incremental impact vs. propensity-only models.
+
+7) Statistical Testing and Uncertainty
+   - Confidence Intervals via bootstrap for metrics; report uncertainty bars.
+   - Paired tests (McNemar for classification) for model comparison on same samples.
+   - Power analysis to size test sets adequately.
+
+8) Dataset Shift and Monitoring
+   - Drift Detection: Population Stability Index (PSI), KL divergence on features, embedding drift for text/images.
+   - Performance Monitoring: Rolling window F1/AUC; alert on degradation.
+   - Data Quality: Missingness spikes, schema changes; integrate with observability tools.
+
+9) Practical Checklist
+   - Define costs and choose metrics that reflect them.
+   - Use curves (ROC/PR) plus thresholded metrics; report per-class results.
+   - Validate calibration when actions depend on probabilities.
+   - Quantify uncertainty and perform statistical tests on improvements.
+   - Monitor in production with drift and data quality checks.
+
+Conclusion:
+Choose metrics aligned with costs of false positives/negatives and operational use. Use curves (ROC/PR), not just point metrics, and analyze calibration when predictions inform downstream decisions. Complement offline evaluation with uncertainty estimates and production monitoring to ensure sustained value.

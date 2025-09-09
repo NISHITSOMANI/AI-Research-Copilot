@@ -1,0 +1,40 @@
+Title: Case Study — Scientific Literature RAG for Faster Research Synthesis
+
+Summary: This case study shows how a RAG system accelerates literature reviews for a research team by retrieving and summarizing papers with precise citations. It covers ingestion of PDFs, metadata normalization (DOI, venue, year), retrieval configuration, prompt templates for evidence tables, and evaluation against expert summaries.
+
+Tags: case-study, rag, scientific, literature-review, citations, evaluation
+
+---
+
+1) Problem and goals
+- Researchers spend hours scanning PDFs for methods and results. Goal: produce evidence tables and concise summaries with citations to exact page/section.
+
+2) Corpus and ingestion
+- Sources: arXiv PDFs, PubMed Central XML, conference proceedings. Unified to UTF-8 text with page markers.
+- Metadata: {doi, title, authors, venue, year, section, page}; references parsed for backward/forward links.
+- Chunking: 180–300 tokens; enforce sentence boundary ends; include section header + page no. in every chunk.
+
+3) Embeddings and index
+- Model: e5-base with "query:" and "passage:" prefixes to align retrieval.
+- Index: HNSWFlat for 2.2M chunks (M=32, efSearch=200). Filters on year (>= 2018) and venue.
+
+4) Reranking and prompts
+- Cross-encoder (bge-reranker-large) for top-200 → top-20.
+- Prompt for evidence extraction: "Extract key claims with effect sizes and sample sizes. Cite as [doi:page]."
+- Synthesis prompt: "Summarize findings, highlight consensus/disagreement, list limitations, and include citations per sentence."
+
+5) Evaluation
+- 60 research questions with gold micro-summaries written by domain experts.
+- Metrics: Retrieval Recall@50=0.93; E2E correctness=0.81; citation accuracy=0.86. SME satisfaction improved from 3.1→4.4/5.
+
+6) Operations and governance
+- Nightly ingest from arXiv feed; de-duplicate by DOI and title; alert on parsing failures.
+- Audit log of all cited chunks for reproducibility; versioned indexes per month.
+
+7) Impact
+- Time-to-first-draft reduced from 2 days to 4 hours; improved reproducibility and citation hygiene.
+
+Citations
+- Lewis et al., 2020. RAG. arXiv:2005.11401.
+- Wang et al., 2022–2024. E5 embeddings. arXiv.
+- BEIR benchmark for retrieval evaluation.

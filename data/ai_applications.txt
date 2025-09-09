@@ -1,0 +1,71 @@
+Title: Applications of AI — Healthcare, Finance, and Robotics
+
+Abstract:
+This document surveys high-impact AI applications across healthcare, finance, and robotics, emphasizing domain-specific constraints like safety, regulation, and interpretability.
+
+Introduction:
+While the core ML toolkit is cross-domain, each application area imposes unique requirements on data governance, latency, accuracy, and accountability.
+
+Core Concepts / Methods:
+1) Healthcare
+   - Tasks: Diagnosis from imaging and EHR, risk prediction, triage, clinical NLP.
+   - Constraints: Privacy (HIPAA/GDPR), fairness, robustness to shift, clinician-in-the-loop.
+   - Examples: Diabetic retinopathy screening (CNNs), radiology report generation (encoder–decoder), sepsis prediction.
+
+2) Finance
+   - Tasks: Fraud detection, credit scoring, market making, OCR on documents.
+   - Constraints: Model risk management (SR 11-7), explainability, latency for trading.
+   - Examples: Gradient boosting for tabular risk, graph ML for fraud rings, anomaly detection in transactions.
+
+3) Robotics
+   - Tasks: Perception, control, SLAM, motion planning, reinforcement learning.
+   - Constraints: Real-time control, safety certs, sim-to-real transfer.
+   - Examples: Imitation + RL for manipulation; visual servoing; model-predictive control.
+
+Applications:
+- Multimodal models integrate vision, language, and sensor data for decision support.
+- Edge deployment with quantization/pruning for low-latency inference in medical devices and robots.
+
+Advanced Topics and Practical Guidance:
+1) Safety and Ethics
+   - Risk Assessment: Identify failure modes, harm likelihood, and mitigations; document via model cards.
+   - Bias Audits: Analyze subgroup performance; apply debiasing and fairness constraints where warranted.
+   - Responsible Guardrails: Content filters, anomaly detectors, and safe fallback behaviors.
+
+2) Human-in-the-Loop (HITL)
+   - Decision Support: Keep humans as final arbiters in high-stakes domains (diagnosis, loans, autonomy).
+   - Active Learning: Prioritize ambiguous cases for labeling; improve data efficiency.
+   - UX: Provide explanations, uncertainty estimates, and easy override mechanisms.
+
+3) Deployment and Latency Engineering
+   - Optimization: Quantization (INT8/FP16), pruning, distillation, operator fusion.
+   - Serving: Batch vs. real-time; request coalescing; GPU vs. CPU trade-offs; autoscaling.
+   - Edge/On-device: Hardware accelerators (TPU/NPU), power constraints, secure update channels.
+
+4) Data Governance and Compliance
+   - Privacy: PHI/PII handling, consent management, encryption at rest/in transit.
+   - Auditability: Lineage for training data and features; reproducible training runs.
+   - Regulations: HIPAA/GDPR/CCPA; financial model risk (SR 11-7); safety certifications for robotics.
+
+5) Monitoring and MLOps
+   - Metrics: Model performance, calibration, drift (data/concept), feature freshness, latency, and cost.
+   - Incident Response: Alerting, canary rollouts, rollback plans; shadow evaluations for new models.
+   - Lifecycle: Continuous training, versioning, A/B testing, and human feedback loops.
+
+6) Case Studies
+   - Healthcare: Sepsis prediction with calibrated risk thresholds and clinician-in-the-loop review.
+   - Finance: Transaction fraud detection with streaming features and feedback from investigators.
+   - Robotics: Vision-based pick-and-place using imitation learning pretraining + RL fine-tuning.
+
+7) Common Pitfalls
+   - Train–serve skew due to inconsistent feature transformations.
+   - Overreliance on aggregate metrics without subgroup analysis or calibration checks.
+   - Underestimating operational costs (GPU hours, networking, labeling) and governance work.
+
+8) Practical Playbook
+   - Define objectives and constraints (accuracy, latency, fairness, cost) with stakeholders.
+   - Establish data contracts and validation; build a minimum-viable monitoring stack early.
+   - Start simple baselines; iterate with ablations; deploy with canaries and HITL safeguards.
+
+Conclusion:
+Successful AI applications balance model performance with governance, safety, and human oversight. Systems should be validated prospectively, monitored continuously, and updated under strict MLOps practices. Bake in explainability, calibration, and robust deployment patterns to sustain value and trust.

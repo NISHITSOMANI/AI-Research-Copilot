@@ -1,0 +1,74 @@
+Title: Recommender Systems — Collaborative Filtering, Content-Based, and Hybrid Methods
+
+Abstract:
+This document explains fundamental recommender approaches, their data requirements, and deployment considerations such as cold-start, diversity, and feedback loops.
+
+Introduction:
+Recommenders personalize content by leveraging user–item interaction histories and metadata. The right method depends on data sparsity, item dynamics, and business goals.
+
+Core Concepts / Methods:
+1) Collaborative Filtering (CF)
+   - User–item matrix factorization (e.g., SVD, ALS): Learn latent factors for users and items.
+   - Neighborhood methods: k-NN similarity among users/items.
+   - Implicit feedback: Use confidence-weighted loss (e.g., Hu et al.) and ranking losses (BPR).
+
+2) Content-Based Filtering
+   - Use item/user features: Text embeddings, images, categories, attributes.
+   - Pros: Handles new items (item cold-start) if features are informative.
+   - Cons: Limited diversity; overfits to known interests without exploration.
+
+3) Hybrid Systems
+   - Combine CF and content features via wide-and-deep models, factorization machines, deep two-tower architectures.
+   - Re-ranking with diversity/novelty constraints; contextual bandits for exploration.
+
+4) Practical Considerations
+   - Cold-start: Metadata, user onboarding questions, popularity priors.
+   - Evaluation: Offline ranking metrics (NDCG, MAP, Recall@K) and online A/B tests.
+   - Bias/feedback loops: Regular audits; counterfactual evaluation (IPS/DR estimators).
+
+Applications:
+- E-commerce product ranking, streaming content recommendations, news feeds.
+- Enterprise: Document discovery, expert matching, job recommendations.
+
+Advanced Topics and Practical Guidance:
+1) Two-Tower and Sequence Models
+   - Two-Tower: Separate user and item encoders produce embeddings; dot-product for retrieval at scale via ANN (e.g., FAISS, ScaNN).
+   - Sequence Models: GRU4Rec, SASRec, and Transformers model user behavior sequences for next-item prediction.
+   - Context Features: Time, device, location; cross features with user/item embeddings.
+
+2) Candidate Generation vs. Ranking vs. Re-ranking
+   - Candidate Generation: High-recall, low-latency retrieval of hundreds of items (ANN over item vectors, popularity priors).
+   - Ranking: Gradient-boosted trees or deep ranking models optimize NDCG/MAP; include interaction features.
+   - Re-ranking: Apply business rules (diversity/novelty/fairness), session context, and personalization constraints.
+
+3) Exploration and Bandits
+   - Contextual Bandits: Balance exploitation vs. exploration; LinUCB/Thompson sampling; slate bandits for lists.
+   - Off-policy Correction: Inverse propensity scoring (IPS), doubly robust (DR) for unbiased evaluation under logging policy.
+   - Safety: Guardrails to limit risky exploration in sensitive domains.
+
+4) Real-time Features and Feature Stores
+   - Stream Features: Short-term click rates, dwell time, add-to-cart; windowed aggregates.
+   - Feature Store: Maintain consistent offline/online features; ensure point-in-time correctness.
+   - Freshness SLAs: Define latency budgets for features; degrade gracefully on staleness.
+
+5) Counterfactual Evaluation and A/B Testing
+   - Offline: Use IPS/DR estimators to approximate online lift; simulate re-ranking effects.
+   - Online: A/B tests with guardrails (CTR/CVR, bounce rate, fairness metrics); sequential testing for faster reads.
+
+6) Fairness, Diversity, and Safety
+   - User Fairness: Avoid echo chambers; enforce exposure diversity and serendipity.
+   - Provider Fairness: Ensure fair exposure for creators/items; control popularity bias.
+   - Safety Filters: Block harmful content categories; apply age/regional restrictions.
+
+7) Scalability and Systems
+   - Indexing: ANN indices (IVF-PQ/HNSW) for candidate generation; incremental updates for new items.
+   - Caching: Session caches and short-term trending item caches reduce tail latency.
+   - Architecture: Microservices for retrieval, ranking, re-ranking; asynchronous logging for feedback.
+
+8) Practical Recipes
+   - Cold-start: Blend content-based scores with CF; initialize user vectors via demographics or onboarding quizzes.
+   - Model Stack: Two-tower for retrieval; GBDT or DNN for ranking; policy layer for re-ranking and constraints.
+   - Monitoring: Track CTR/CVR, coverage/diversity, long-term retention; run shadow tests before full rollout.
+
+Conclusion:
+CF captures collaborative patterns; content-based methods leverage item attributes; hybrids and bandits address cold-start and exploration. Production recommenders align offline ranking with business KPIs via re-ranking and online experimentation. Invest in feature freshness, counterfactual evaluation, and fairness-aware objectives to sustain performance and trust.

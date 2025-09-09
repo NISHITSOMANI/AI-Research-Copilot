@@ -1,0 +1,91 @@
+Title: Computer Vision — Detection, Segmentation, YOLO, and Vision Transformers (ViT)
+
+Abstract:
+This document surveys core computer vision tasks and architectures: object detection, semantic/instance segmentation, the YOLO family, and Vision Transformers (ViT). We compare pipeline design, accuracy–latency trade-offs, and typical applications.
+
+Introduction:
+Vision models have evolved from handcrafted features (SIFT/HOG) to deep CNNs and Transformers. Modern benchmarks demand real-time inference in production while maintaining accuracy.
+
+Core Concepts / Methods:
+1) Object Detection
+   - Two-stage: R-CNN, Fast/Faster R-CNN (region proposals then classification/regression).
+   - One-stage: YOLO, SSD, RetinaNet (direct dense prediction for speed).
+   - Metrics: mAP at IoU thresholds; precision–recall curves.
+
+2) Segmentation
+   - Semantic segmentation: Assign class to each pixel (e.g., DeepLab, FCN).
+   - Instance segmentation: Distinguish object instances (e.g., Mask R-CNN, YOLACT, SOLO, Segment Anything for prompting).
+   - Panoptic segmentation: Unifies semantic + instance (e.g., Panoptic FPN).
+
+3) YOLO Family
+   - Idea: Single forward pass for bounding boxes + class probabilities on grid/anchor points.
+   - Evolution: YOLOv3/v5/v7 (community), YOLOv4, YOLOX, YOLOv8; trade-offs across speed/accuracy.
+   - Strengths: Real-time deployment on edge devices; simple pipeline.
+
+4) Vision Transformers (ViT)
+   - Mechanism: Split image into patches; apply transformer encoder with self-attention.
+   - Pros: Global context modeling; scales well with data.
+   - Cons: Data-hungry; may require strong regularization/augmentation.
+   - Hybrids: CNN backbones with attention blocks; ConvNeXt as CNN refinement inspired by transformers.
+
+Applications:
+- Detection: Retail loss prevention, autonomous driving, wildlife monitoring.
+- Segmentation: Medical imaging (organ segmentation), agriculture (leaf disease mapping), AR.
+- ViT/DETR: End-to-end object detection and image understanding with minimal handcrafted priors.
+
+Detector Families — Trade-offs:
+1) Two-stage (Faster R-CNN)
+   - Pros: High accuracy with region proposals; strong for small objects.
+   - Cons: Higher latency; complex pipeline.
+2) One-stage (YOLO/SSD/RetinaNet)
+   - Pros: Real-time speed; simpler end-to-end training.
+   - Cons: Historically lower mAP on small objects; improved by better anchors and feature pyramids.
+3) Anchor-free (FCOS, CenterNet)
+   - Idea: Predict keypoints/centers instead of anchor boxes; simpler design.
+   - Pros: Reduced hyperparameters; competitive accuracy.
+
+Segmentation Techniques:
+1) Semantic Segmentation
+   - Architectures: U-Net, DeepLab (atrous convs), PSPNet (pyramid pooling), HRNet (high-resolution branch).
+   - Losses: Cross-entropy, dice loss, focal loss for class imbalance.
+2) Instance Segmentation
+   - Architectures: Mask R-CNN (two-stage), SOLO/CondInst (instance-aware features), YOLACT (real-time prototypes).
+   - Metrics: AP across IoU thresholds per instance.
+3) Panoptic Segmentation
+   - Unifies semantic and instance; panoptic quality (PQ) metric balances segmentation and recognition quality.
+
+Training and Augmentation:
+   - Augs: Mosaic/MixUp (YOLO), color jitter, random resize-crop, CutOut; test-time augmentation (TTA).
+   - Class Imbalance: Focal loss, re-weighting, hard example mining.
+   - Multi-scale Training: Improves robustness across resolutions.
+
+Datasets and Metrics:
+   - COCO (80 classes) with mAP@[.50:.95]; Pascal VOC; Cityscapes for urban scenes; LVIS for long-tail distributions.
+   - For segmentation: mIoU, Dice; for detection: mAP, AR; for tracking: MOTA/MOTP.
+
+ViT and DETR in Practice:
+   - ViT requires strong regularization and larger pretraining sets; hybrid CNN stems help on small datasets.
+   - DETR simplifies pipelines (no NMS) but needs longer training; Deformable DETR accelerates convergence and improves small-object performance.
+
+Deployment and Edge Considerations:
+   - Quantization-aware training and post-training quantization (INT8) reduce latency.
+   - Pruning and knowledge distillation (teacher–student) yield compact models.
+   - Hardware: TensorRT, OpenVINO, CoreML; watch for ops compatibility (e.g., deformable attention).
+
+Case Studies:
+   - Retail: One-stage detectors on embedded GPUs for shelf monitoring with hard-negative mining.
+   - Medical: U-Net variants with Dice/focal loss to address class imbalance and boundary accuracy.
+   - Autonomous Driving: Multi-task heads for detection, lane segmentation, and depth estimation.
+
+Common Pitfalls:
+   - Over-augmentation hurting fine textures; tune policies per domain.
+   - Evaluation mismatch (e.g., only AP@0.5 but production needs high IoU for alignment).
+   - Dataset bias: Background leakage; ensure diverse scenes and lighting conditions.
+
+Guidance:
+   - Use YOLO/RetinaNet for real-time apps; consider Faster R-CNN/DETR for accuracy-first offline settings.
+   - For segmentation, start with U-Net/DeepLab; add attention modules for global context.
+   - Always measure latency on target hardware and optimize I/O and pre/post-processing.
+
+Conclusion:
+Two-stage detectors lead on accuracy in data-rich settings; one-stage models (YOLO) excel in latency-critical applications. ViTs introduce global receptive fields and competitive accuracy, especially when pre-trained on large datasets. Selecting an approach depends on deployment constraints and data scale. Robust augmentation, correct metrics, and edge optimizations close the gap from benchmarks to production.

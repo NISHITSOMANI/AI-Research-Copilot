@@ -1,0 +1,32 @@
+Title: Embedding Quality & Domain Adaptation
+
+Summary: Techniques to adapt general-purpose embeddings to specialized domains. Discusses continued pretraining, contrastive fine-tuning with hard negatives, and evaluation.
+
+Tags: embeddings, domain-adaptation, fine-tuning, hard-negatives, retrieval, evaluation
+
+---
+
+1) Diagnosis: is adaptation needed?
+- Test recall@k on an in-domain query set; inspect nearest neighbors qualitatively.
+- If synonyms/terms-of-art are missed, consider adaptation.
+
+2) Strategies
+- Continued pretraining: keep training the base model on unlabeled in-domain text; improves vocabulary/semantics.
+- Contrastive fine-tuning: train on (query, positive, hard negative) triplets; mine negatives via BM25/ANN.
+- Multi-task: mix general and domain pairs to retain broad knowledge.
+
+3) Data construction
+- Derive positives from citations, hyperlinks, section references.
+- Generate semi-synthetic pairs with LLMs, then filter by heuristics and human review.
+
+4) Regularization and stability
+- Use small learning rates and early stopping; freeze lower layers when data is small.
+- Mixup/augmentation: paraphrases for robustness.
+
+5) Evaluation
+- Maintain a held-out in-domain set; track Recall@k, nDCG; check for regressions on general benchmarks.
+
+Citations
+- Gururangan et al., 2020. Don’t Stop Pretraining: Adapt Language Models to Domains and Tasks. ACL.
+- Karpukhin et al., 2020. DPR. arXiv:2004.04906.
+- Reimers & Gurevych, 2019. SBERT. arXiv:1908.10084.

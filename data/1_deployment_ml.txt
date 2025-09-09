@@ -1,0 +1,49 @@
+Title: Production Considerations — Latency, Quantization, Caching, Monitoring
+
+Summary: Practical guidance for deploying ML/LLM systems. Discusses latency budgets, model optimization (quantization, distillation), caching strategies, safety, observability, and SLOs.
+
+Tags: deployment, latency, quantization, caching, monitoring, observability, scalability, mlops
+
+---
+
+1) Define product SLOs
+- Latency: p50/p95 targets (e.g., p95 < 1s for search, < 3s for chat turn). Budget across steps: retrieval, rerank, generation.
+- Availability: error budget and autoscaling policies.
+- Quality: groundedness rate, citation accuracy, user satisfaction.
+
+2) Model optimization
+- Quantization: int8/int4 with GPTQ/AWQ or ONNX Runtime/QAT; calibrate to minimize loss of quality.
+- Distillation: smaller student models mimic teacher outputs; great for rerankers/classifiers.
+- Pruning and low-rank adapters for smaller memory footprint.
+
+3) Serving architecture
+- Separate stateless API layer from model workers; use task queues and dynamic batching.
+- Enable KV cache for decoder LMs; pin models on GPU; use tensor parallelism for large models.
+- Route by request type (retrieval-only vs generation vs rerank) to optimized workers.
+
+4) Caching strategies
+- Response cache for deterministic prompts; context cache for retrieved chunks; embedding cache for repeated texts.
+- Use TTL and versioning; invalidate on corpus updates or prompt template changes.
+
+5) Observability and monitoring
+- Collect traces with spans for each stage (ingest, retrieve, rerank, generate).
+- Metrics: QPS, latency, GPU/CPU utilization, OOMs, fallbacks, cache hit rate.
+- Log prompts/responses with redaction; store provenance (doc ids) for audits.
+
+6) Safety and abuse prevention
+- Input filtering for PII/toxicity; rate limiting and abuse detection.
+- Guardrails: refusal policies, citation requirements, and post-generation verification.
+
+7) Cost optimization
+- Prefer small models with RAG for most queries; escalate to larger models only when necessary (router/gating).
+- Batch offline embedding jobs; spot/preemptible instances for non-critical workloads.
+
+8) Testing and rollout
+- Canary releases; A/B tests; offline eval suites and red teams.
+- Chaos testing for dependency failures (vector DB down, cache cold, model OOM).
+
+Citations
+- NVIDIA Triton Inference Server docs.
+- Hugging Face Text Generation Inference (TGI) docs.
+- ONNX Runtime quantization guides.
+- Google SRE Workbook for SLOs and error budgets.

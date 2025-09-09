@@ -1,0 +1,33 @@
+Title: Retrieval Evaluation — Recall@k, MRR, and Reranker Metrics
+
+Summary: How to evaluate retrieval systems. Covers recall@k, precision@k, MRR, nDCG, and metrics for rerankers. Discusses offline and online evaluation strategies.
+
+Tags: retrieval, evaluation, metrics, recall, mrr, ndcg, reranking
+
+---
+
+1) Core retrieval metrics
+- Recall@k: fraction of queries with at least one relevant item in top-k.
+- Precision@k: fraction of top-k that are relevant.
+- MRR (Mean Reciprocal Rank): average of 1/rank of the first relevant result; sensitive to early precision.
+- nDCG: graded relevance; discounts lower ranks; better for multi-relevant settings.
+
+2) Reranker metrics
+- Evaluate re-ordered top-k; report nDCG@10, MRR@10, MAP.
+- Pairwise accuracy: fraction of pairs (relevant vs non-relevant) correctly ordered.
+
+3) Ground truth and judgments
+- Sources: manual annotations, click models (debiased), distant supervision.
+- Pitfalls: position bias, selection bias; use interleaving or counterfactual methods when possible.
+
+4) Offline vs online
+- Offline: controlled, repeatable; build realistic query sets.
+- Online: A/B tests; track CTR, success rate, dwell time; beware novelty effects.
+
+5) Statistical testing
+- Use paired tests (bootstrap) for metric differences; report confidence intervals.
+
+Citations
+- Voorhees & Harman, 2005. TREC.
+- Jarvelin & Kekalainen, 2002. Cumulated gain-based evaluation of IR techniques.
+- Joachims et al., 2017. Unbiased Learning to Rank with Counterfactual Inference.

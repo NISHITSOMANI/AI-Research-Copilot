@@ -1,0 +1,48 @@
+Title: Evaluation Metrics — Accuracy, Precision/Recall/F1, ROC–PR, and Pitfalls
+
+Summary: A concise guide to core ML evaluation metrics. Explains accuracy, precision, recall, F1, ROC/PR curves, AUCs, class imbalance pitfalls, and common traps. Includes a numeric example demonstrating when ROC-AUC can mislead.
+
+Tags: evaluation, metrics, accuracy, precision, recall, f1, roc, pr, auc, imbalanced-data
+
+---
+
+1) Core definitions
+- Confusion matrix (binary): TP, FP, TN, FN.
+- Accuracy = (TP + TN) / (TP + FP + TN + FN).
+- Precision = TP / (TP + FP): how many predicted positives are correct.
+- Recall = TP / (TP + FN): how many actual positives are found.
+- F1 = 2 * (precision * recall) / (precision + recall).
+
+2) Threshold curves
+- ROC curve: TPR vs FPR across thresholds; TPR = recall; FPR = FP / (FP + TN).
+- PR curve: precision vs recall across thresholds; more informative under heavy class imbalance.
+- AUC-ROC: probability that a randomly chosen positive ranks above a negative.
+- AUC-PR: area under PR curve; sensitive to prevalence (baseline equals positive rate).
+
+3) When ROC-AUC misleads (numeric example)
+- Suppose a dataset with 1% positives (100 positives, 9,900 negatives). Model A correctly ranks most positives above negatives yielding AUC-ROC=0.95. At a threshold for 80% recall, precision is only 10% (many false positives) → PR-AUC low.
+- Model B focuses on top precision: at 50% recall, precision is 50%; AUC-ROC might be 0.90 but PR-AUC higher. For rare-event detection, Model B is better despite lower ROC-AUC.
+
+4) Multi-class and averaging
+- Macro-average: average metric per class; treats classes equally.
+- Micro-average: aggregate counts over classes; dominated by frequent classes.
+- Weighted: average weighted by class support.
+
+5) Calibration and decision quality
+- Calibration measures whether predicted probabilities match observed frequencies (e.g., reliability diagrams, Brier score, ECE).
+- For decision-making (cost-sensitive), optimize expected utility (e.g., choose threshold to maximize F_beta or net benefit).
+
+6) Metrics for ranking/retrieval
+- Recall@k, MRR, nDCG; pair with downstream task metrics (answer correctness, groundedness).
+
+7) Best practices
+- Always report class prevalence and confidence intervals.
+- Use PR curves for imbalanced problems; supplement ROC with PR.
+- Report multiple operating points (high-precision, high-recall).
+- Avoid leakage; use proper cross-validation and stratified splits.
+
+Citations
+- Davis & Goadrich, 2006. The Relationship Between Precision-Recall and ROC Curves. ICML.
+- Saito & Rehmsmeier, 2015. The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. PLoS ONE.
+- Niculescu-Mizil & Caruana, 2005. Predicting Good Probabilities with Supervised Learning. ICML.
+- scikit-learn documentation: metrics module.

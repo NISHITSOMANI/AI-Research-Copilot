@@ -1,0 +1,43 @@
+Title: Case Study — Enterprise RAG for Policy & Procedures Portal
+
+Summary: This case study describes deploying a RAG system to answer employee policy/procedure questions with citations. It details corpus preparation, retrieval configuration, prompt design, evaluation, and production operations, including compliance and latency constraints.
+
+Tags: case-study, enterprise, rag, policies, compliance, citations, evaluation
+
+---
+
+1) Problem and constraints
+- Goal: reduce helpdesk load by answering HR/IT policy questions with authoritative citations.
+- Constraints: compliance (must cite policy IDs), privacy (PHI/PII redaction), latency p95 < 2.5s.
+
+2) Corpus and ingestion
+- Sources: PDFs (handbooks), Confluence pages, emails → normalized to UTF-8 text.
+- Chunking: 250–350 tokens, 20% overlap; include metadata {doc_id, section, page, effective_date}.
+- Deduplication: hash-based and cosine > 0.97 near-duplicate removal.
+
+3) Embeddings and index
+- Model: all-MiniLM-L6-v2 with normalize_embeddings=True.
+- FAISS: IndexFlatIP for 0.8M chunks initially; planned migration to HNSWFlat as N grows >1.5M.
+- Filters: department, region; use metadata pre-filtering for precision.
+
+4) Reranking and prompting
+- Cross-encoder reranker: ms-marco-MiniLM-L-6-v2 on top-100 to produce top-10.
+- Prompt: "Answer using only the provided context. Cite sources as [doc_id:section]. If unsure, say 'I don't know'."
+
+5) Evaluation
+- 150 real employee queries with gold references from SMEs.
+- Metrics: Recall@20 (retrieval) and answer correctness + citation accuracy (E2E).
+- Results: Recall@20=0.91; E2E correctness=0.84; citation accuracy=0.88.
+
+6) Production operations
+- Caching: retrieval cache (TTL 24h), answer cache keyed on query+filter.
+- Monitoring: drift in query types; alert when recall@20 < 0.85 for 3 consecutive days.
+- Governance: redaction of PII; audit logs of citations.
+
+7) Impact
+- 37% reduction in helpdesk tickets for policy Qs; average handle time reduced by 45%.
+
+Citations
+- Lewis et al., 2020. RAG. arXiv:2005.11401.
+- FAISS documentation.
+- Sentence-Transformers documentation.

@@ -1,0 +1,33 @@
+Title: Chunking Strategies and Heuristics for RAG
+
+Summary: Practical approaches to chunking documents for retrieval. Focus on coherence, boundaries, overlap, and metadata to increase retrievability and answer quality.
+
+Tags: chunking, rag, heuristics, overlap, metadata, segmentation
+
+---
+
+1) Boundary-first
+- Prefer splitting at sentence/paragraph/section boundaries; avoid cutting tables, equations, or code blocks mid-entity.
+
+2) Size and overlap
+- 150–400 tokens per chunk; adjust by domain. Overlap 10–30% where context continuity matters.
+
+3) Titles and headers
+- Attach document title and the closest section header to each chunk for better retrieval.
+
+4) Semantic signals
+- Use bullet/heading markers, figure/table captions, and anchor text to preserve meaning.
+
+5) Adaptive strategies
+- Short chunks for FAQs and APIs; larger for narratives and legal text.
+- Page-aware chunking for PDFs; include page numbers in metadata.
+
+6) De-duplication and quality
+- Hash-normalize text; remove boilerplate; de-duplicate near-identical chunks.
+
+7) Evaluation
+- Track retrieval metrics as you vary chunk sizes; pick Pareto-optimal settings.
+
+Citations
+- Lewis et al., 2020. RAG. arXiv:2005.11401.
+- Thakur et al., 2021. BEIR: A Heterogenous Benchmark for IR. arXiv:2104.08663.

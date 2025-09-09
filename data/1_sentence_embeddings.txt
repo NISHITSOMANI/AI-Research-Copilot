@@ -1,0 +1,65 @@
+Title: Sentence Embeddings and Sentence-Transformers — Practical Guidance
+
+Summary: A practitioner-focused guide to building, selecting, and using sentence embeddings. Covers model choice (e.g., all-MiniLM-L6-v2), dimensions, normalization, similarity metrics, batching, domain adaptation, and evaluation.
+
+Tags: embeddings, sentence-transformers, similarity, retrieval, semantic-search, normalization, cosine, guidance
+
+---
+
+1) Why sentence embeddings
+- Represent sentences/paragraphs as dense vectors that capture semantics, enabling semantic search, clustering, deduplication, and RAG retrieval.
+
+2) Model choices and trade-offs
+- all-MiniLM-L6-v2 (384-d): excellent balance of speed and quality; default baseline for English.
+- e5-small / e5-base: trained with instruction-style prompts ("query:", "passage:") improving retrieval alignment.
+- multilingual-e5 / LaBSE: multilingual retrieval and cross-lingual search.
+- Instructor models: allow task-specific instructions at embed time; helpful when queries differ from passages.
+- Larger models (mpnet-base, bge-large): higher quality but slower; consider for reranking.
+
+3) Tokenization and normalization
+- Use the model’s provided tokenizer; do not mix tokenizers.
+- L2-normalize output vectors when using cosine similarity; for dot-product/IP, consider scaling or normalization for stability.
+
+4) Similarity metrics
+- Cosine similarity is scale-invariant and common for retrieval.
+- Inner product (dot) is equivalent to cosine if vectors are normalized; faster in many ANN libraries.
+- L2 distance works but can be sensitive to vector norms.
+
+5) Inference best practices
+- Batch inputs to maximize GPU throughput; use dynamic padding and attention masks.
+- Use fp16/bf16 on GPU to double throughput; ensure numerical stability.
+- Cache embeddings for frequently seen texts and queries.
+- Limit input length (e.g., 256–512 tokens) and truncate on sentence boundaries when possible.
+
+6) Domain adaptation
+- Fine-tune on domain pairs (query, passage) with contrastive or triplet losses.
+- Use hard negatives (BM25 or ANN mined) to improve discrimination.
+- If labeled data is scarce, perform continued pretraining on in-domain text before contrastive fine-tuning.
+
+7) Evaluation and monitoring
+- Retrieval: Recall@k, nDCG, MRR; track on a validation set with realistic queries.
+- Clustering: silhouette score; manual inspection of cluster purity.
+- Drift: monitor embedding norm and similarity distributions over time.
+
+8) Integration with FAISS
+- Choose metric (IP or L2) to match your similarity; normalize if using cosine.
+- Start with FlatIP or HNSW for up to ~1–5M vectors; IVFFlat/PQ for larger corpora with recall–latency trade-offs.
+- Persist metadata externally (JSON/DB) keyed by vector id; or use libraries that co-store it.
+
+9) Common pitfalls
+- Mixing tokenizers or models between indexing and querying.
+- Not normalizing vectors when using cosine.
+- Overly large chunk sizes that dilute semantic focus.
+- Evaluating only end-to-end without measuring retrieval quality.
+
+10) Minimal pseudo-code (HF Sentence-Transformers)
+- Load: model = SentenceTransformer("all-MiniLM-L6-v2")
+- Encode: vecs = model.encode(texts, batch_size=64, normalize_embeddings=True)
+- Search: build FAISS index with metric=IP; query with top_k and rerank if needed.
+
+Citations
+- Reimers & Gurevych, 2019. Sentence-BERT: Sentence Embeddings using Siamese BERT Networks. arXiv:1908.10084.
+- Wang et al., 2022–2024. E5: Text Embeddings by Weakly-Supervised Contrastive Learning. arXiv:2212.03533 and subsequent releases.
+- Feng et al., 2020. LaBSE: Language-agnostic BERT Sentence Embedding. arXiv:2007.01852.
+- Neelakantan et al., 2022. Text and Code Embeddings by Contrastive Pretraining. OpenAI text-embedding models.
+- Hugging Face Sentence-Transformers documentation.

@@ -1,0 +1,97 @@
+Title: Deep Learning Architectures — CNNs, RNNs, LSTMs, and Transformers
+
+Abstract:
+This document compares major deep learning families—Convolutional Neural Networks (CNNs), Recurrent Neural Networks (RNNs), Long Short-Term Memory networks (LSTMs), and Transformers. We discuss their inner mechanisms, strengths, weaknesses, and typical use cases.
+
+Introduction:
+Deep learning provides flexible function approximators for perception and sequence modeling. Architecture choice impacts performance, compute cost, and data efficiency.
+
+Core Concepts / Methods:
+1) CNNs (Convolutional Neural Networks)
+   - Mechanism: Convolutions exploit spatial locality and weight sharing; pooling for translation invariance.
+   - Variants: ResNet (skip connections), DenseNet (dense connectivity), MobileNet (depthwise separable convs).
+   - Strengths: Excellent for images and spatial data; parameter-efficient vs. fully connected layers.
+   - Limitations: Struggle with long-range dependencies unless receptive field is expanded (dilations) or attention is added.
+   - Use Cases: Image classification, detection backbones, segmentation encoders.
+
+2) RNNs (Recurrent Neural Networks)
+   - Mechanism: Hidden state propagates over time; captures temporal dependencies.
+   - Issues: Vanishing/exploding gradients; difficulty with long sequences.
+   - Variants: GRU (gates), bidirectional RNNs.
+   - Use Cases: Early NLP, speech, time series forecasting.
+
+3) LSTMs (Long Short-Term Memory)
+   - Mechanism: Gated memory cell (input, forget, output gates) to preserve long-term information.
+   - Strengths: Better long-range modeling than vanilla RNNs; strong for medium-length sequences.
+   - Limitations: Sequential computation hinders parallelism; slower training on long sequences.
+   - Use Cases: Language modeling, sequence tagging, multivariate time series.
+
+4) Transformers
+   - Mechanism: Self-attention layers model pairwise token interactions; positional encodings replace recurrence.
+   - Strengths: Highly parallelizable; capture long-range dependencies; scale well with data and compute.
+   - Limitations: Quadratic attention cost with sequence length; data-hungry.
+   - Variants: Encoder-only (BERT), decoder-only (GPT), encoder-decoder (T5); efficient attention (Longformer, Performer), vision transformers (ViT), ConvNext hybrids.
+   - Use Cases: NLP, vision (ViT, DETR), speech, genomics, multimodal tasks.
+
+Applications:
+- CNNs: Medical imaging, satellite imagery, object detection and segmentation backbones.
+- LSTMs/RNNs: Sensor data forecasting, speech recognition (legacy), sequence labeling.
+- Transformers: Text generation, retrieval, translation, code understanding, image classification/detection with DETR.
+
+Training Recipes and Regularization:
+1) Initialization and Normalization
+   - Residual connections (ResNet, Transformer) ease gradient flow.
+   - LayerNorm vs. BatchNorm: Transformers favor LayerNorm; CNNs often use BatchNorm.
+   - Weight initialization (He/Xavier) and careful scaling prevent divergence.
+
+2) Regularization
+   - Dropout/Stochastic Depth: Reduce co-adaptation; improve generalization.
+   - Data Augmentation: Mixup, CutMix, RandAugment for images; span masking and random token deletion for NLP.
+   - Weight Decay and Label Smoothing: Particularly effective with large transformer models (AdamW + smoothing).
+
+3) Optimization
+   - Optimizers: SGD with momentum for CNNs; AdamW with warmup and cosine decay for transformers.
+   - Gradient Clipping: Stabilizes training for RNNs/LSTMs and transformers.
+   - Learning Rate Schedules: Cosine, one-cycle, or linear decay with warmup.
+
+Efficiency and Latency Considerations:
+1) CNNs
+   - Depthwise separable convolutions and bottlenecks reduce FLOPs (MobileNet, EfficientNet).
+   - Dilation and stride trade receptive field vs. resolution.
+
+2) RNN/LSTM
+   - Sequential dependency limits parallelism; consider truncated BPTT and fused kernels.
+   - For latency-sensitive tasks, prefer smaller hidden sizes with projection layers.
+
+3) Transformers
+   - Quadratic attention cost mitigations: Sparse attention (Longformer), kernelized (Performer), linear attention (Linformer), blockwise (BigBird), sliding windows.
+   - Quantization, pruning, distillation (e.g., DistilBERT) reduce footprint for edge deployment.
+
+Long-Context and Multimodal Extensions:
+   - Retrieval-augmented models (RAG) inject external memory for long documents.
+   - Perceiver/Perceiver IO: Cross-attention to latent arrays scales to long sequences.
+   - Multimodal transformers fuse text, vision, audio via cross-attention (e.g., CLIP, Flamingo, LLaVA).
+
+Vision Beyond CNNs:
+   - DETR: Set-based detection with bipartite matching; simplifies NMS-heavy pipelines.
+   - Segmenter/Mask2Former: Transformer-based segmentation with panoptic unification.
+   - ViT hybrids: Combine convolutional stem with transformer encoder for robustness on small datasets.
+
+Case Studies:
+   - ImageNet Classification: EfficientNet vs. ViT under data regimes; ViT benefits from large-scale pretraining.
+   - ASR (Speech): RNN-T/Conformer replacing LSTMs; attention improves long-range phoneme context.
+   - Time Series: Temporal Convolutional Networks vs. LSTM; TCNs parallelize better with competitive accuracy.
+
+Common Pitfalls:
+   - Overfitting with large transformers on small datasets; mitigate with stronger augmentation or freezing layers.
+   - Instability from poor learning rate warmup; watch for NaNs early in training.
+   - CNNs with aggressive downsampling losing fine details; add dilations or higher-resolution branches.
+
+Comparisons and Guidance:
+   - Choose CNNs for spatially local patterns and tight latency budgets; add attention for global context.
+   - Use LSTMs/GRUs for smaller-scale sequential problems when simplicity matters.
+   - Prefer transformers for large datasets, long dependencies, and transfer learning.
+   - Hybridize: CNN backbones with transformer heads, or transformer encoders with RNN decoders where appropriate.
+
+Conclusion:
+CNNs dominate spatial perception; LSTMs extend RNNs for temporal dependencies; Transformers provide scalable sequence modeling and are now state-of-the-art across modalities. Hybrids (CNN + attention) and efficient attention variants often balance accuracy and efficiency. Practical deployments weigh accuracy against compute, latency, and data scale, often favoring compact models with distillation and quantization.

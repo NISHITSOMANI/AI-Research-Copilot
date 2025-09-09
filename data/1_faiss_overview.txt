@@ -1,0 +1,60 @@
+Title: FAISS Overview — Index Types, Internals, and Trade-offs
+
+Summary: An engineer’s guide to FAISS (Facebook AI Similarity Search). Explains core data structures, metric choices, index types (Flat, IVFFlat, HNSW, Product Quantization), and hybrid strategies. Includes sizing, recall–latency tuning, and persistence tips.
+
+Tags: faiss, ann, vector-search, ivf, hnsw, pq, opq, flat, hybrid, similarity
+
+---
+
+1) What is FAISS
+- A high-performance library for similarity search and clustering of dense vectors, optimized for CPU/GPU.
+- Supports metrics: L2, Inner Product (IP). Cosine is achieved via normalization + IP.
+
+2) Core building blocks
+- Flat indexes: store raw vectors; exact search; best recall, higher memory/latency.
+- Quantizers: compress vectors to reduce memory (PQ, OPQ).
+- Inverted File (IVF): coarse quantization partitions space into nlist clusters, searching only a subset (nprobe clusters) at query time.
+- Graph-based: HNSW enables fast approximate search via navigable small-world graphs.
+
+3) Common index types
+- IndexFlatL2 / IndexFlatIP: exact search; good up to ~1–5M vectors depending on RAM/latency targets.
+- IndexIVFFlat: IVF coarse quantizer + raw vectors in lists; trade recall for speed via nlist/nprobe.
+- IndexIVFPQ: IVF + Product Quantization; large memory savings with moderate recall loss.
+- IndexHNSWFlat: graph-based, strong speed–recall trade-off without training.
+- IndexIVFOPQ: OPQ rotation before PQ to improve quantization quality.
+
+4) Choosing parameters
+- nlist (IVF cluster count): rule-of-thumb sqrt(N) to N/10 depending on memory/time; tune empirically.
+- nprobe (search lists): increases recall linearly with latency; start with 1–10% of nlist.
+- PQ code size: m (subquantizers) and bits per code (e.g., m=16, 8 bits → 16 bytes/vector); more bits → better recall but more memory.
+- HNSW: M (graph degree) and efSearch/efConstruction control recall/latency; higher efSearch → higher recall.
+
+5) GPU considerations
+- GPU Flat and IVF offer large speedups; use float16 storage for memory savings.
+- Sharding: IndexShards to split across multiple GPUs; replicate for concurrency.
+- Train IVF/PQ on CPU, then transfer to GPU; or use GPU training for large datasets.
+
+6) Hybrid and filtering
+- Hybrid dense + lexical: run FAISS for dense candidates, then BM25 for keywords, merge by score.
+- Metadata filtering: keep an external store (DB) to filter candidate ids before or after search; or use libraries that integrate filtering.
+
+7) Persistence and updates
+- Save/load with write_index/read_index; persist training state (coarse quantizer, codebooks).
+- For frequent inserts/deletes: HNSW is simpler; IVF requires periodic rebalancing/retraining.
+- Maintain a mapping from FAISS ids to document metadata (JSON/DB).
+
+8) Evaluation and tuning
+- Measure Recall@k against a ground truth; sweep nprobe, efSearch, PQ code size.
+- Watch vector norm distributions; normalize if using cosine.
+- De-duplicate near-identical vectors to reduce wasted capacity.
+
+9) Example baselines
+- <= 1M vectors: IndexFlatIP or HNSWFlat.
+- 1–50M: IVFFlat with nlist≈sqrt(N), nprobe≈1–5% nlist.
+- 50M+: IVFPQ or IVFOPQ; pre-filter with metadata; add reranking.
+
+Citations
+- Johnson, Douze, and Jégou, 2017. Billion-scale similarity search with GPUs. IEEE/FB AI; FAISS whitepaper.
+- FAISS GitHub and documentation: https://github.com/facebookresearch/faiss
+- Malkov & Yashunin, 2018. Efficient and robust approximate nearest neighbor search using HNSW. IEEE PAMI.
+- Jegou et al., 2011. Product Quantization for Nearest Neighbor Search. IEEE TPAMI.

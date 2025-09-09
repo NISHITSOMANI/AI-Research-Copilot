@@ -1,0 +1,53 @@
+Title: Transformers Overview — Architecture, Attention, and Scaling Laws
+
+Summary: A deep dive into transformer architecture, attention mechanisms, encoder/decoder designs, and empirical scaling laws. Includes practical notes on context length, optimization, and inference.
+
+Tags: transformers, attention, encoder, decoder, seq2seq, scaling-laws, architecture
+
+---
+
+1) Core architecture
+- Input embeddings + positional information feed into stacks of attention and feed-forward layers (FFN/MLP) with residual connections and layer normalization.
+- Multi-Head Self-Attention: splits representation into heads to attend to different subspaces.
+- FFN: typically two linear layers with activation (GELU/ReLU/Swish); width often 4x hidden size.
+
+2) Encoder vs decoder vs encoder–decoder
+- Encoder-only: bidirectional self-attention, masked language modeling objective (BERT family).
+- Decoder-only: causal mask enforces autoregressive generation (GPT/Llama/Mistral).
+- Encoder–decoder: encoder builds source representation; decoder attends over encoder outputs with cross-attention (T5/BART).
+
+3) Attention mechanics and variants
+- Scaled dot-product attention with softmax; complexity O(n^2). Variants include:
+  - Sparse/Local Attention (Longformer/BigBird) to extend context efficiently.
+  - Linear/Kernelized Attention (Performer) for approximate O(n) complexity.
+  - ALiBi/RoPE positional methods for long-context extrapolation.
+
+4) Positional encodings
+- Absolute sinusoidal (original Transformer), learned absolute, relative position biases (DeBERTa), rotary embeddings (RoPE) widely used in decoder LLMs.
+
+5) Training objectives and tricks
+- Causal LM, Masked LM, Span Corruption (T5). Curriculum on sequence length.
+- Optimizers: AdamW with weight decay; learning rate warmup + cosine decay; gradient clipping.
+- Regularization: dropout, stochastic depth; label smoothing for classification; data noising and augmentation.
+
+6) Scaling laws (Kaplan et al., Chinchilla)
+- Empirical laws suggest loss scales predictably with compute, data, and model size.
+- Chinchilla-optimal training keeps model size and data tokens balanced (roughly 20 tokens per parameter order-of-magnitude, details depend on domain).
+- Implication: for fixed compute, prefer training longer on more data with slightly smaller models.
+
+7) Inference and serving
+- KV caching drastically reduces per-token latency for autoregressive models.
+- Quantization (int8/int4) reduces memory and can speed CPU/GPU inference with minimal quality loss when calibrated.
+- Speculative decoding and beam search/top-p/top-k sampling trade diversity vs quality.
+
+8) Context length and memory
+- Attention memory scales with sequence length; use flash attention kernels; chunked attention for long sequences.
+- Retrieval augmentation and tool use can effectively extend context.
+
+Citations
+- Vaswani et al., 2017. Attention Is All You Need. arXiv:1706.03762.
+- Beltagy et al., 2020. Longformer. arXiv:2004.05150.
+- Zaheer et al., 2020. BigBird. arXiv:2007.14062.
+- Choromanski et al., 2020. Performer. arXiv:2009.14794.
+- Kaplan et al., 2020. Scaling Laws for Neural Language Models. arXiv:2001.08361.
+- Hoffmann et al., 2022. Training Compute-Optimal Large Language Models (Chinchilla). arXiv:2203.15556.

@@ -1,0 +1,52 @@
+Title: Causal Inference — Counterfactuals, Identification, and Estimation
+
+Abstract:
+This document introduces causal inference for data scientists. It covers causal graphs, identification strategies (back-door, front-door, IV), estimation methods (matching, propensity scores, doubly robust), heterogeneous treatment effects, and practical pitfalls.
+
+Introduction:
+Correlation is not causation. Causal inference seeks to estimate the effect of interventions (treatments) on outcomes under assumptions encoded by a causal model, often represented as a Directed Acyclic Graph (DAG).
+
+Core Concepts / Methods:
+1) Causal Models and Counterfactuals
+   - Potential outcomes (Neyman–Rubin) and structural causal models (Pearl).
+   - Assumptions: Stable unit treatment value (SUTVA), ignorability/no unmeasured confounding.
+
+2) Identification
+   - Back-door criterion: Adjust for confounders blocking spurious paths.
+   - Front-door criterion: Use mediators to identify effects when confounding exists.
+   - Instrumental Variables (IV): Leverage exogenous instruments that affect treatment but not outcome except through treatment.
+
+3) Estimation Techniques
+   - Matching and weighting (propensity scores, inverse probability weighting).
+   - Outcome regression; doubly robust estimators (AIPW) combine modeling and weighting.
+   - Causal forests, DR-learner, R-learner, T-learner, X-learner for heterogeneous effects.
+
+4) Experiments and Quasi-Experiments
+   - Randomized Controlled Trials (RCTs) as gold standard; power analysis and compliance issues.
+   - Difference-in-differences, regression discontinuity, synthetic controls for observational settings.
+
+Evaluation and Sensitivity:
+- Balance diagnostics for covariates post-weighting/matching.
+- Placebo tests and falsification; robustness to alternative specifications.
+- Sensitivity analysis (Rosenbaum bounds) for unobserved confounding.
+
+Advanced Topics and Practical Guidance:
+1) Mediation and Moderation
+   - Decompose total effects into direct and indirect paths; moderated effects across subgroups.
+
+2) Interference and Spillovers
+   - Violations of SUTVA when units influence each other (networks); partial interference models.
+
+3) Time-varying Treatments
+   - Marginal structural models and g-methods for longitudinal interventions.
+
+Applications:
+- Marketing lift measurement, policy evaluation, healthcare treatment effects, product changes.
+
+Practical Recipes:
+- Start with a DAG; list assumptions explicitly; pre-register analysis where possible.
+- Use doubly robust methods and check balance; report uncertainty and sensitivity.
+- Validate with natural experiments or A/B tests when possible; beware post-treatment bias.
+
+Conclusion:
+Causal inference equips practitioners to estimate effects that inform decisions beyond correlations. Success depends on clear assumptions, robust estimation, and rigorous validation under domain constraints.

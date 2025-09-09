@@ -1,0 +1,72 @@
+Title: Optimization Algorithms — SGD, Adam, RMSprop, and Learning Rate Schedules
+
+Abstract:
+This document explains common optimizers for training neural networks and their trade-offs. We discuss SGD (with momentum), Adam, RMSprop, and the role of learning rate schedules and regularization.
+
+Introduction:
+Optimization determines how model parameters are updated to minimize loss. Proper optimizer and schedule choices can significantly impact convergence speed and generalization.
+
+Core Concepts / Methods:
+1) SGD (Stochastic Gradient Descent)
+   - Update: θ := θ - η ∇L(θ; minibatch)
+   - Momentum: Accumulates a velocity term to mitigate noise and accelerate along low-curvature directions.
+   - Strengths: Strong generalization; simple; works well with well-tuned LR and momentum.
+   - Weaknesses: Sensitive to LR; may struggle on ill-conditioned problems.
+
+2) RMSprop
+   - Idea: Adaptive per-parameter learning rate using an EMA of squared gradients.
+   - Pros: Stabilizes training for non-stationary objectives; popular in RNNs.
+   - Cons: Can overfit; may require careful decay tuning.
+
+3) Adam
+   - Combines momentum (first moment) and RMSprop-like scaling (second moment).
+   - Pros: Fast convergence, robust defaults; common for transformers.
+   - Cons: Sometimes poorer generalization vs. SGD; weight decay needs decoupling (AdamW).
+
+4) Learning Rate Schedules and Tricks
+   - Schedules: Step decay, cosine annealing, exponential decay, one-cycle policy.
+   - Warmup: Gradually increase LR to stabilize early training (important for transformers).
+   - Regularization: Weight decay, dropout, data augmentation, gradient clipping.
+
+Applications:
+- SGD(m): Image classification with CNNs where generalization is paramount.
+- Adam/AdamW: NLP transformers, generative models.
+- RMSprop: RNN-based tasks; some reinforcement learning setups.
+
+Advanced Topics and Practical Guidance:
+1) Second-order and Quasi-Newton Methods
+   - L-BFGS: Effective for small/medium problems and fine-tuning; memory heavy for deep nets.
+   - K-FAC/Natural Gradient: Precondition updates using curvature approximations; useful but complex to implement.
+
+2) Adaptive vs. SGD: Generalization Debate
+   - Observation: Adaptive methods (Adam) converge faster but sometimes generalize worse on vision tasks.
+   - Mitigation: AdamW (decoupled weight decay), longer warmup, switching to SGD late in training.
+
+3) Normalization and Regularization Interactions
+   - BatchNorm often pairs well with SGD; LayerNorm common with AdamW in transformers.
+   - Weight decay acts like L2 regularization but interacts differently with adaptive updates.
+   - Gradient clipping stabilizes RNNs/Transformers; typical norms 0.1–1.0.
+
+4) Learning Rate Schedule Design
+   - Warmup: Linear warmup over first 1–5% steps prevents early divergence.
+   - Cosine Annealing: Smooth decay; optionally with restarts.
+   - One-Cycle: Aggressive schedule that can speed convergence in vision tasks.
+   - Discriminative LRs: Different LRs per layer group (higher for new heads, lower for pretrained backbone).
+
+5) Training Diagnostics
+   - Loss Curves: Plateaus suggest LR too low; divergence suggests too high.
+   - Gradient Norms: Exploding gradients indicate need for clipping or LR reduction.
+   - Validation Gap: Growing gap indicates overfitting; increase regularization or data augmentation.
+
+6) Large-Batch Training
+   - Linear Scaling Rule: Scale LR with batch size; requires warmup.
+   - Gradient Accumulation: Emulate large batches under memory limits.
+   - Optimization Tweaks: LARS/LAMB optimizers for very large batches.
+
+7) Practical Recipes
+   - Vision (from scratch): SGD+momentum (0.9), cosine decay, label smoothing; try mixup/cutmix.
+   - NLP (transformers): AdamW (β1=0.9, β2=0.999), warmup 1–5%, cosine/linear decay; weight decay 0.01.
+   - Fine-tuning: Lower LR on backbone; higher on task head; early stopping with patience.
+
+Conclusion:
+No single optimizer dominates. Start with AdamW and cosine schedule for transformers; SGD with momentum and step/cosine schedule for CNNs. Validate with learning rate sweeps and monitor validation metrics to avoid overfitting. Use warmup, clipping, and discriminative LRs to stabilize and speed training; consider switching optimizers late if generalization stalls.

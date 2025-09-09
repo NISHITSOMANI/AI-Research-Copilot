@@ -1,0 +1,39 @@
+Title: LLM Families Comparison — BERT vs GPT vs T5 vs Llama vs Falcon
+
+Summary: High-level comparison of popular transformer families. Focuses on architecture type, objectives, strengths, and common use-cases.
+
+Tags: models, comparison, bert, gpt, t5, llama, falcon, architecture
+
+---
+
+1) BERT family (encoder-only)
+- Objective: masked language modeling (bidirectional context).
+- Strengths: text understanding, classification, NER, extractive QA, retrieval rerankers.
+- Limitations: not generative out-of-the-box; sequence-to-sequence needs additional head.
+
+2) GPT family (decoder-only)
+- Objective: causal LM (left-to-right generation) with large-scale pretraining.
+- Strengths: open-ended generation, reasoning, few-shot learning; tool use with plugins/functions.
+- Considerations: hallucination risk; RAG and constraints mitigate.
+
+3) T5 family (encoder–decoder)
+- Objective: text-to-text with span corruption; task prompted via textual prefixes.
+- Strengths: flexible multitask; summarization, translation, QA; strong instruction tuning variants (FLAN-T5).
+
+4) Llama family (decoder-only, open weights)
+- Meta's open LLMs (Llama 2/3). Good quality across sizes; strong community fine-tunes for many tasks.
+- Strengths: on-prem deployment; customization via LoRA/Adapters; ecosystem support.
+
+5) Falcon (decoder-only)
+- TII's Falcon models; strong performance at release; permissive licenses for many use cases.
+
+6) Practical selection
+- Understanding/reranking: BERT/RoBERTa, MiniLM.
+- RAG generation: Llama/Mistral/GPT variants; pick size based on latency/cost.
+- Multitask seq2seq: T5/FLAN-T5.
+
+Citations
+- Devlin et al., 2018. BERT. arXiv:1810.04805.
+- Raffel et al., 2019. T5. arXiv:1910.10683.
+- Touvron et al., 2023–2024. Llama 2/3. arXiv + Meta AI releases.
+- Almazrouei et al., 2023. Falcon LLM. TII.

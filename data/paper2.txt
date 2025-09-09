@@ -1,0 +1,82 @@
+Title: Efficient Similarity Search with FAISS
+
+Abstract:
+This paper introduces FAISS (Facebook AI Similarity Search), a library for efficient similarity search and clustering of dense vectors. FAISS is optimized for  both memory usage and search speed, making it particularly useful for large-scale machine learning applications. We discuss the core algorithms, implementation details, and performance characteristics of FAISS, along with practical examples of its application in various domains.
+
+Introduction:
+Similarity search is a fundamental operation in many machine learning applications, including recommendation systems, image retrieval, and natural language processing. As the size of datasets continues to grow, efficient algorithms for similarity search become increasingly important.
+
+Core Algorithms:
+1. Inverted File System (IVF): Partitions the vector space into clusters and searches only the most promising clusters.
+2. Product Quantization (PQ): Compresses vectors to reduce memory usage while maintaining search quality.
+3. Hierarchical Navigable Small World (HNSW): A graph-based approach that provides excellent search performance for high-dimensional data.
+
+Implementation Details:
+FAISS is implemented in C++ with Python bindings, making it both efficient and easy to use. The library supports various index types, including:
+- Flat indexes for exact search
+- IVF indexes for faster approximate search
+- HNSW indexes for very large datasets
+- Composite indexes that combine multiple techniques
+
+Performance Characteristics:
+- Scales to billions of vectors
+- Supports both CPU and GPU acceleration
+- Provides tools for index optimization and parameter tuning
+
+Applications:
+1. Recommendation Systems: Finding similar items or users
+2. Computer Vision: Image retrieval and duplicate detection
+3. Natural Language Processing: Semantic search and document similarity
+4. Bioinformatics: Sequence alignment and pattern matching
+
+Advanced Topics and Practical Guidance:
+1) Index Families and Composition
+   - Flat (IndexFlatL2/IP): Exact search; baseline for accuracy and small datasets.
+   - IVF (IndexIVF*): Coarse quantizer partitions space; search probes top nlist clusters via nprobe.
+   - PQ/OPQ: Product quantization compresses vectors into codebooks; OPQ rotates space to reduce quantization error.
+   - HNSW: Graph-based small-world structure; excellent recall–latency trade-offs at medium scales.
+   - Composites: IVF-PQ, IVF-HNSW-PQ, or pretransform (OPQ) + IVF-PQ; select per memory and latency budget.
+
+2) IVF/PQ Tuning Knobs
+   - nlist (number of clusters): Typically ~sqrt(N) as a starting point; larger nlist enables finer partitions.
+   - nprobe (clusters to probe at query): Higher improves recall at cost of latency.
+   - m, bits (PQ params): More subquantizers/bits improve accuracy but increase memory and compute.
+   - Pretransform (OPQ): Learn orthogonal rotation before PQ to reduce reconstruction error.
+
+3) HNSW Parameters
+   - M: Graph out-degree; larger M increases memory and recall.
+   - efConstruction: Controls index build accuracy/time; higher improves graph quality.
+   - efSearch: Query-time beam width; tune per latency target.
+
+4) GPU Acceleration
+   - IndexFlat on GPU: High throughput exact search; multi-GPU sharding.
+   - IVF/PQ on GPU: Train on CPU, copy to GPU for fast query; or train on GPU for speed with large data.
+   - Memory: Use half-precision or compress residuals to fit larger collections on GPU.
+
+5) Memory–Speed Trade-offs
+   - Flat exact search: Highest memory and accuracy; poor scalability beyond tens of millions.
+   - IVF-PQ: 4–16x compression with modest recall loss; adjustable via m and bits.
+   - HNSW: Competitive recall with moderate memory overhead; good for frequent updates.
+
+6) Updates and Maintenance
+   - Add/Remove: IVF supports add and lazy delete with ID masking; periodic re-clustering may be needed.
+   - Dynamic Datasets: HNSW handles incremental inserts well; IVF-PQ prefers batch updates.
+   - ID Mapping: Maintain external ID maps; use IndexIDMap2 wrappers for stable identifiers.
+
+7) Training and Clustering Best Practices
+   - Sample Representatively: Train coarse quantizer and PQ codebooks on a stratified sample.
+   - Normalize for Cosine: For cosine similarity, L2-normalize vectors and use inner-product metrics.
+   - Whitening/OPQ: Reduce anisotropy; improve PQ accuracy on text embeddings.
+
+8) Evaluating Recall and Latency
+   - Ground Truth: Use exact search on a sampled subset to compute recall@K for ANN indices.
+   - Latency Profiling: Measure p50/p95; tune nprobe/efSearch to meet SLOs.
+   - Cache Effects: Warm caches and batch queries to improve throughput.
+
+9) Practical Deployment Recipes
+   - Semantic Search (10–100M vectors): OPQ + IVF-PQ with nlist≈sqrt(N), tune nprobe for recall≥0.95.
+   - Real-time Updates (1–20M): HNSW with M∈[16,64], efSearch tuned for p95 latency.
+   - Multi-Stage: Two-level retrieval—HNSW/IVF-PQ for candidates, then rerank via exact or cross-encoder.
+
+Conclusion:
+FAISS provides a powerful and flexible framework for similarity search that can be adapted to a wide range of applications. Its efficient implementation and support for various index types make it a valuable tool for researchers and practitioners working with large-scale vector data.

@@ -1,0 +1,89 @@
+Title: Natural Language Processing — Tokenization, Embeddings, BERT, GPT, and T5
+
+Abstract:
+This document outlines key components of modern NLP: tokenization schemas, representation learning via embeddings, and transformer-based model families BERT, GPT, and T5. We highlight when each approach excels and how they compare.
+
+Introduction:
+NLP systems transform raw text into structured representations suitable for machine learning. Tokenization and embeddings are foundational steps; large transformer models have reshaped downstream performance.
+
+Core Concepts / Methods:
+1) Tokenization
+   - Word-level: Simple but suffers from OOV (out-of-vocabulary) issues.
+   - Subword-level: Byte-Pair Encoding (BPE), WordPiece, Unigram; balance vocabulary size and coverage.
+   - Character/byte-level: Robust to OOV; longer sequences increase compute.
+   - Practical tip: Use the tokenizer paired with the pre-trained model to ensure consistency.
+
+2) Embeddings
+   - Static: word2vec, GloVe; one vector per token regardless of context.
+   - Contextual: ELMo, BERT embeddings; token meaning varies with sentence context.
+   - Sentence/document embeddings: SBERT, Universal Sentence Encoder for retrieval and clustering.
+
+3) BERT (Encoder-only)
+   - Pretraining: Masked Language Modeling (MLM) + Next Sentence Prediction (NSP, often removed in newer variants).
+   - Usage: Strong for understanding tasks (classification, QA with span extraction).
+   - Limitation: Not a generative decoder; less suited for long-form generation.
+
+4) GPT (Decoder-only)
+   - Pretraining: Autoregressive next-token prediction.
+   - Usage: Generative tasks (dialog, code, summarization), in-context learning and few-shot prompting.
+   - Strengths: Strong generative fluency; scalable with data/compute.
+
+5) T5 (Encoder–Decoder)
+   - Pretraining: Text-to-text objective (span corruption and generation).
+   - Usage: Flexible; cast many tasks into text-to-text format (translation, QA, summarization).
+
+Applications:
+- Tokenization/Embeddings: Search, clustering, semantic similarity.
+- BERT: Sentence classification, NER, extractive QA.
+- GPT: Chatbots, code generation, open-ended summarization.
+- T5: Translation, task-unified pipelines, data-to-text generation.
+
+Extended Topics and Practical Guidance:
+1) Tokenization Trade-offs
+   - Subword Choice: BPE vs. WordPiece vs. Unigram impacts vocabulary size and fragment rates; evaluate OOV behavior on your domain.
+   - Normalization: Lowercasing, Unicode normalization, and special token handling affect downstream accuracy and robustness.
+   - Long Documents: Sliding windows or hierarchical encoders; consider long-context models or chunk-and-merge strategies.
+
+2) Embeddings Best Practices
+   - Domain Adaptation: Further pretrain sentence embedding models on in-domain corpora for retrieval tasks.
+   - Pooling Strategies: CLS token vs. mean pooling; empirical results vary by architecture.
+   - Similarity: Use cosine similarity with normalized vectors; calibrate thresholds based on validation sets.
+
+3) Fine-tuning and Parameter-Efficient Tuning (PEFT)
+   - Full Fine-tuning: Highest capacity but compute- and memory-intensive.
+   - Adapters/Prefix/Prompt Tuning: Inject small trainable modules; faster and cheaper updates.
+   - LoRA (Low-Rank Adaptation): Train low-rank matrices on attention/projection layers; strong trade-off between quality and efficiency.
+   - Instruction Tuning: Fine-tune on curated instruction–response pairs to improve helpfulness and following directions.
+
+4) Prompting and In-Context Learning
+   - Zero-/Few-shot: Provide task description and examples directly in the prompt to steer generation.
+   - Chain-of-Thought: Encourage step-by-step reasoning for complex tasks; can improve factuality and math.
+   - Guardrails: Use system prompts and output schemas to reduce unsafe or off-topic responses.
+
+5) Retrieval-Augmented Generation (RAG)
+   - Pipeline: Retrieve relevant passages via dense embeddings; ground generation on retrieved context.
+   - Index Choices: FAISS with cosine/IP; HNSW/IVF for scalability; re-ranking with cross-encoders.
+   - Evaluation: Measure retrieval recall@K and downstream answer faithfulness; log provenance of sources.
+
+6) Multilingual and Cross-lingual NLP
+   - Multilingual Models: mBERT, XLM-R; benefit from shared subword vocabularies.
+   - Cross-lingual Transfer: Zero-shot transfer from high-resource languages to low-resource ones.
+   - Tokenization: Scripts and diacritics require careful normalization.
+
+7) Evaluation
+   - Classification/NER: F1 (macro/micro), span-level metrics; entity boundary errors are common.
+   - QA: Exact Match and F1 for extractive; faithfulness metrics for generative answers.
+   - Summarization/Generation: ROUGE, BLEU, BERTScore, and human evaluation for coherence and factuality.
+
+8) Safety, Bias, and Hallucination
+   - Bias Mitigation: Debiasing datasets, calibrated decoding, and post-hoc audits.
+   - Hallucinations: Constrain generation to retrieved context; use citations and grounded answering.
+   - Content Safety: Classifiers and rule-based filters for PII and sensitive content.
+
+9) Practical Tips
+   - Mixed Precision: Use fp16/bf16 to accelerate inference; quantize to int8/int4 when acceptable.
+   - Caching: Cache tokenization and encoder outputs for repeated prompts in production.
+   - Monitoring: Track toxicity, off-topic rate, and retrieval latency; set SLOs for user experience.
+
+Conclusion:
+Tokenization and embeddings underpin NLP pipelines, while transformer families provide complementary strengths: BERT for understanding, GPT for generation, and T5 for task-unified text-to-text formulations. Modern NLP systems benefit from PEFT techniques, RAG for grounding, robust evaluation, and safety mitigations. Choose models and tokenization strategies that match domain data, latency constraints, and risk tolerance.

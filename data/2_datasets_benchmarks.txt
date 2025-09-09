@@ -1,0 +1,33 @@
+Title: Datasets & Benchmarks — SQuAD, GLUE, MMLU, and Beyond
+
+Summary: Overview of canonical NLP datasets and benchmarks with typical uses and caveats. Helps choose datasets for evaluation and fine-tuning.
+
+Tags: datasets, benchmarks, squad, glue, mmlu, beir, evaluation
+
+---
+
+1) Question Answering
+- SQuAD: extractive QA; evaluate span selection; risk of annotation artifacts.
+- Natural Questions, TriviaQA: open-domain QA.
+
+2) General NLP benchmarks
+- GLUE/SuperGLUE: classification, entailment, similarity; good for model understanding.
+
+3) Reasoning and knowledge
+- MMLU: 57 tasks spanning various disciplines; measures broad knowledge.
+- BIG-bench, ARC: reasoning-focused.
+
+4) Retrieval
+- BEIR: 18+ retrieval datasets across domains (TREC-COVID, FiQA, NFCorpus, etc.).
+
+5) Safety and truthfulness
+- TruthfulQA for hallucination propensity; HaluEval variants.
+
+6) Caveats
+- Overfitting to benchmarks; domain gaps to production data; licensing and PII concerns.
+
+Citations
+- Rajpurkar et al., 2016. SQuAD.
+- Wang et al., 2018. GLUE.
+- Hendrycks et al., 2021. MMLU.
+- Thakur et al., 2021. BEIR.

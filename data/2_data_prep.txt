@@ -1,0 +1,33 @@
+Title: Data Cleaning & Preprocessing for Text
+
+Summary: A compact guide to cleaning and normalizing text data prior to modeling. Includes Unicode normalization, punctuation/whitespace handling, tokenization choices, stopwords, and deduplication.
+
+Tags: data-prep, cleaning, text, normalization, stopwords, deduplication
+
+---
+
+1) Normalization
+- Unicode normalization (NFC/NFKC); fix encoding issues; standardize quotes/dashes.
+- Lowercasing where appropriate; preserve case for proper nouns if needed.
+
+2) Whitespace and punctuation
+- Collapse multiple spaces; standardize bullets and lists; remove boilerplate.
+- Keep punctuation if models rely on it; many tokenizers expect raw punctuation.
+
+3) Tokenization and stopwords
+- Use model-consistent tokenizers; avoid removing stopwords blindly for neural models.
+- For lexical baselines (BM25), stopword removal and stemming may help.
+
+4) Text segmentation
+- Sentence splitting with punkt/udpipe/spacy; page-aware splitting for PDFs.
+
+5) Deduplication
+- Normalize and hash; use MinHash/LSH for near-duplicates; threshold cosine similarity > 0.95 to merge.
+
+6) Metadata
+- Track source, date, author, section; crucial for filtering and evaluation.
+
+Citations
+- Manning, Raghavan, Schütze, 2008. Introduction to Information Retrieval.
+- spaCy and NLTK documentation.
+- Common Crawl cleaning pipelines (various references).

@@ -1,0 +1,55 @@
+Title: Practical RAG How-To — Chunking, Metadata, and Prompts
+
+Summary: Hands-on guidance to build robust RAG systems. Covers chunk sizing heuristics, overlap strategies, metadata design, prompt templates, and iterative evaluation.
+
+Tags: rag, practice, chunking, metadata, prompts, evaluation, heuristics
+
+---
+
+1) Corpus preparation
+- Normalize text: fix Unicode, remove boilerplate, preserve headings and lists.
+- Segment by structure: sections → paragraphs → sentences; avoid splitting tables/codes mid-row.
+- Store source identifiers (url, file path, page, section) as metadata.
+
+2) Chunk size heuristics
+- Start with 200–350 tokens; ensure chunks end on sentence boundaries.
+- Overlap 10–30% when continuity matters (legal, scientific), less for FAQs or atomic paragraphs.
+- Keep title and section headers in every chunk to improve retrievability.
+
+3) Embedding and indexing
+- Use a strong baseline like all-MiniLM-L6-v2 with normalized vectors.
+- Choose FAISS metric to match cosine/IP; begin with IndexFlatIP; graduate to HNSW or IVFFlat as N grows.
+- Cache embeddings; de-duplicate near-duplicates using cosine > 0.95 threshold.
+
+4) Query processing
+- Normalize queries similarly; consider query expansion via synonyms/entities from an LLM.
+- Route specialized queries (code/math) to domain-specific retrievers if available.
+
+5) Reranking and filtering
+- Apply a cross-encoder reranker to top 50–200 retrieved passages to boost top-5 precision.
+- Use metadata filters (date range, source type) for precision.
+
+6) Prompt templates (examples)
+- QA template: System: "Answer using only the provided context. Cite sources as [id]. If unsure, say 'I don't know'." User: "Question: {q}\nContext:\n{chunks}\nAnswer:"
+- Summarize template: "Summarize the following with citations: {chunks}. Focus on {criteria}."
+- Multi-step: ask for extraction first (key facts) then synthesis.
+
+7) Guardrails and groundedness
+- Post-hoc verification: ask model to check each claim against sources and list unmatched claims.
+- Penalize uncited sentences; restrict output length to encourage concise, grounded answers.
+
+8) Evaluation loop
+- Build a dev set of 50–200 real queries with gold references.
+- Track retrieval Recall@k, MRR; end-to-end answer correctness and citation accuracy.
+- Ablate chunk size, overlap, reranker, and index params; pick Pareto-optimal settings.
+
+9) Operations
+- Incremental updates: embed and upsert changed docs nightly; rebuild IVF/PQ when drift is large.
+- Caching: memoize retrieval for hot queries; use TTL on caches; store final answers with provenance.
+- Monitoring: alert on drop in recall@k or increase in hallucination rate.
+
+Citations
+- Lewis et al., 2020. RAG. arXiv:2005.11401.
+- Karpukhin et al., 2020. DPR. arXiv:2004.04906.
+- Nogueira & Cho, 2019. Reranking with BERT. arXiv:1901.04085.
+- Gao et al., 2023. Rerankers for RAG. Cohere/Ship data; various blog/documentation sources.

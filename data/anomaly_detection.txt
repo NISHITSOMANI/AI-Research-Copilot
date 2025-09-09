@@ -1,0 +1,48 @@
+Title: Anomaly Detection — Statistical, Distance-based, and Deep Methods
+
+Abstract:
+This document reviews techniques for detecting rare, unusual, or suspicious patterns in data. It covers statistical baselines, distance and density methods, one-class classification, deep autoencoders, and practical challenges like label scarcity and concept drift.
+
+Introduction:
+Anomalies are context-dependent and often rare, making supervised learning difficult. Effective solutions combine robust features, unsupervised/semi-supervised models, and human-in-the-loop validation with cost-aware thresholds.
+
+Core Concepts / Methods:
+1) Statistical and Rule-based
+   - Z-scores, robust z (MAD), seasonal decomposition with residual thresholds, control charts (CUSUM/EWMA).
+
+2) Distance and Density
+   - k-NN distance, Local Outlier Factor (LOF), Isolation Forest for tabular data.
+   - Kernel density estimation; hypersphere methods.
+
+3) One-Class and Deep Methods
+   - One-Class SVM, SVDD; autoencoders and variational autoencoders for reconstruction errors.
+   - Sequence models for time series anomalies (LSTM/TCN), Transformers for multivariate sensors.
+
+4) Graph and Streaming Anomalies
+   - Subgraph anomalies, sudden community changes; streaming sketches for high-volume data.
+
+Evaluation and Thresholding:
+- Metrics: PR-AUC, ROC-AUC, precision@K; use PR curves for extreme imbalance.
+- Thresholds: Cost-aware selection; combine model score with business rules.
+- Human Review: Queue top anomalies for analyst triage; feedback loops for continuous improvement.
+
+Advanced Topics and Practical Guidance:
+1) Label Scarcity
+   - Use weak supervision, data programming, and synthetic anomalies to augment training data.
+
+2) Drift and Seasonality
+   - Adaptive thresholds and retraining; calendar effects and holiday patterns.
+
+3) Explainability
+   - Shapley values for tabular features; saliency maps for images; exemplar-based explanations.
+
+Applications:
+- Fraud detection, system monitoring, manufacturing quality, cybersecurity, health signals.
+
+Practical Recipes:
+- Start with robust baselines (seasonal decomposition + control charts) to set expectations.
+- Add Isolation Forest/OC-SVM; for sequences, use autoencoders with sliding windows.
+- Build analyst tooling for feedback; monitor drift and false positive rates.
+
+Conclusion:
+Anomaly detection requires careful thresholding and continual monitoring. Combining statistical baselines with modern models and human expertise yields practical, cost-effective systems.

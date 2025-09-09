@@ -1,0 +1,40 @@
+Title: Sanity Queries — Expected High-Level Answers for RAG Validation
+
+Summary: This document lists three sanity queries and the expected high-level bullet answers that a properly configured RAG system should return. Use these to quickly validate retrieval grounding and response structure.
+
+Tags: sanity-check, validation, rag, expected-answers, qa
+
+---
+
+Query 1: List major applications of NLP with examples and how they’re typically implemented.
+Expected Answer (bullets):
+- Text classification: sentiment, topic, toxicity. Implement with encoder models (BERT/RoBERTa/MiniLM) or lightweight CNN/LSTM; fine-tune on labeled datasets; evaluate with accuracy/F1.
+- Named Entity Recognition (NER): extract entities like PERSON/ORG/DATE. Implement with token classification heads on BERT; evaluate with span-level F1.
+- Question Answering: extractive (SQuAD-style) using encoder models; generative QA with seq2seq (T5) or decoder LLM + RAG; require citations in RAG.
+- Summarization: abstractive with T5/BART or decoder LLM; constrain length; evaluate with ROUGE/BERTScore.
+- Machine Translation: encoder–decoder (Transformer/T5); evaluate with BLEU/COMET.
+- Semantic Search/Retrieval: embed queries & passages (Sentence-Transformers like all-MiniLM-L6-v2); ANN via FAISS; rerank with cross-encoder.
+- Conversational agents: task-oriented with intent/slot models; open-ended with LLM + tools/RAG; include guardrails.
+
+Query 2: Explain ROC vs PR and when ROC-AUC is misleading (numeric example).
+Expected Answer (bullets):
+- ROC plots TPR vs FPR across thresholds; PR plots precision vs recall.
+- Under heavy class imbalance, PR is more informative; ROC can look high even with poor precision.
+- Numeric example: with 1% positives, a model can achieve AUC-ROC ≈ 0.95 yet at 80% recall only 10% precision (many false positives) → PR-AUC low; a model with AUC-ROC 0.90 but higher precision at operational recall may be preferable.
+- Report prevalence, PR curves, multiple operating points, and confidence intervals.
+
+Query 3: What is FAISS and what index types does it support?
+Expected Answer (bullets):
+- FAISS is a high-performance library for similarity search of dense vectors (CPU/GPU) supporting L2 and inner product; cosine via normalization.
+- Index types: Flat (IndexFlatL2/IP) exact; IVF family (IVFFlat, IVFPQ, IVFOPQ) coarse quantization; HNSW (IndexHNSWFlat) graph-based; hybrid strategies (IVF+PQ).
+- Key params: nlist (clusters), nprobe (search lists), PQ code size (m, bits), HNSW M and efSearch.
+- Persistence: write_index/read_index; sharding/replication on GPU.
+
+Notes
+- Ensure the answers include citations to the underlying chunks by id/path.
+- Keep bullets concise and grounded; abstain when context is insufficient.
+
+Citations
+- Davis & Goadrich, 2006 (ROC vs PR).
+- Johnson et al., 2017 (FAISS); FAISS GitHub docs.
+- Reimers & Gurevych, 2019 (Sentence-BERT) for semantic search.

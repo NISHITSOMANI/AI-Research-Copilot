@@ -1,0 +1,74 @@
+Title: Time Series Analysis — Forecasting, Seasonality, and Probabilistic Modeling
+
+Abstract:
+This document surveys classical and modern techniques for time series modeling and forecasting. It covers decomposition, ARIMA/SARIMA, exponential smoothing, state space models, machine learning approaches (GBTs, DeepAR, Transformers), feature engineering, evaluation, and productionization, with a focus on seasonality, trend, holidays, anomalies, and uncertainty quantification.
+
+Introduction:
+Time series data arise in finance, operations, energy, web traffic, and IoT. Practical forecasting must handle non-stationarity, multiple seasonalities, exogenous variables, missingness, and evolving regimes while providing calibrated uncertainty for decision-making.
+
+Core Concepts / Methods:
+1) Decomposition and Stationarity
+   - Additive vs. multiplicative decomposition into trend, seasonality, and residual.
+   - Stationarity checks via ACF/PACF and unit-root tests (ADF/KPSS); differencing and Box-Cox.
+
+2) Classical Models
+   - ARIMA/SARIMA: Autoregressive and moving-average terms with seasonal components.
+   - Exponential Smoothing (ETS): Level, trend, seasonality with additive/multiplicative forms.
+   - State Space: Kalman filter, structural time series; handles missing data and interventions.
+
+3) ML and Deep Learning
+   - Gradient Boosted Trees: Lag features, rolling statistics, calendar and holiday effects.
+   - RNN/LSTM/TCN: Sequence models for complex dependencies; require careful regularization.
+   - Probabilistic Deep Models: DeepAR/DeepState, N-BEATS, TFT; multi-horizon forecasts.
+   - Transformers for Long Horizon: Informer/Autoformer; efficient attention for long contexts.
+
+4) Exogenous Variables (X)
+   - Weather, promotions, prices, macro indicators; causal care to avoid leakage.
+   - Prophet-style regressors and holiday calendars to encode events.
+
+5) Multiple Seasonality and Hierarchies
+   - Daily/weekly/annual cycles; Fourier terms for flexible seasonality.
+   - Hierarchical and grouped forecasting with reconciliation (BU/Mint) for coherent aggregates.
+
+6) Anomalies and Regime Shifts
+   - Change-point detection (Bayesian online change point, BOCPD) and robust losses.
+   - Outlier handling via winsorization, robust estimators, and intervention modeling.
+
+Evaluation and Uncertainty:
+- Metrics: sMAPE, MAPE, MAE, RMSE, pinball/quantile loss for probabilistic forecasts.
+- Backtesting: Rolling-origin evaluation; use realistic forecast horizons and gaps.
+- Calibration: Coverage of prediction intervals; PIT histograms for probabilistic models.
+
+Advanced Topics and Practical Guidance:
+1) Feature Engineering for ML
+   - Lags, rolling windows, expanding means, weekday/month, holidays; interactions with promo flags.
+   - Leakage prevention: Only use information available at forecast time; careful with rollups.
+
+2) Global vs. Local Models
+   - Local: One model per series; strong when data are abundant per series.
+   - Global: Shared model across series (DeepAR/TFT); leverages cross-series patterns and cold-starts.
+
+3) Intermittent Demand
+   - Croston/SBA methods; zero-inflated models and count likelihoods for sporadic demand.
+
+4) Hierarchical Reconciliation
+   - Bottom-up, top-down, and optimal combination methods to ensure forecasts sum correctly.
+
+5) Causality and Interventions
+   - Difference-in-differences and synthetic control to estimate promo impacts separate from seasonality.
+
+6) Productionization
+   - Data pipelines for late/missing data; holiday calendars; feature stores for consistency.
+   - Monitoring: Drift in seasonality, error spikes; alerting; retraining schedules.
+   - Decisioning: Integrate with inventory, staffing, and pricing systems; scenario analysis.
+
+Applications:
+- Retail demand planning, energy load forecasting, ad spend pacing, traffic capacity planning, IoT sensor monitoring.
+
+Practical Recipes:
+- Start with baseline ETS/SARIMA; add regressors for holidays; compare to Gradient Boosted Trees with robust features.
+- For many related series, try global models (DeepAR/TFT) with item/category metadata.
+- Use quantile forecasts for service levels and risk-aware decisions; validate calibration.
+
+Conclusion:
+Time series forecasting blends statistical modeling, feature engineering, and domain knowledge. Robust systems combine interpretable baselines with modern deep models, produce calibrated uncertainty, and are embedded in monitored, automated pipelines.

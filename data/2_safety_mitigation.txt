@@ -1,0 +1,30 @@
+Title: Safety & Hallucination Mitigation — Verifiers, Citations, Conservative Prompts
+
+Summary: Techniques to reduce unsafe or hallucinated outputs. Covers input filtering, conservative prompting, retrieval grounding, attribution scoring, and post-hoc verification.
+
+Tags: safety, hallucinations, grounding, citations, filtering, verification
+
+---
+
+1) Risk assessment
+- Identify misuse vectors (PII, toxicity), high-stakes errors, and legal constraints.
+
+2) Preventive controls
+- Input filters for PII/toxicity; rate limiting; policy constraints via system prompts.
+- Conservative prompting: require citations; allow abstention; limit output length.
+
+3) Grounding and attribution
+- RAG with strict requirement to cite [doc_id]; penalize uncited claims.
+- Attribution scoring: check each sentence against retrieved sources; flag low-overlap claims.
+
+4) Post-hoc verification
+- Use verifiers (smaller LMs or classifiers) to detect hallucinations or policy violations.
+- Self-checking: ask model to list claims and cite supporting spans.
+
+5) Monitoring and feedback
+- Red-team tests; user feedback loops; continuous evaluation on risky prompts.
+
+Citations
+- Ji et al., 2023. Survey on Hallucination in Natural Language Generation. arXiv:2301.05216.
+- OpenAI, Anthropic, and Meta policy docs; various alignment literature.
+- Krishna et al., 2021. TruthfulQA. arXiv:2109.07958.

@@ -1,0 +1,58 @@
+Title: Graph Machine Learning — GNNs, Link Prediction, and Graph Representation Learning
+
+Abstract:
+This document introduces graph machine learning with a focus on Graph Neural Networks (GNNs), node/edge/graph prediction, link prediction, graph embeddings, scalability, and applications. It compares popular architectures, training tricks, and deployment considerations.
+
+Introduction:
+Graphs represent entities and their relationships. Many real-world problems—recommendation, fraud, molecules, knowledge graphs—are naturally graph-structured. GML learns from topology and attributes to generalize over nodes and subgraphs.
+
+Core Concepts / Methods:
+1) Message Passing Neural Networks (MPNNs)
+   - Layers aggregate messages from neighbors (GCN, GraphSAGE, GAT); update node states.
+   - Aggregators: mean/sum/max; attention to weight neighbors; residual and normalization stabilize training.
+
+2) Tasks
+   - Node classification/regression, link prediction, and graph classification.
+   - Negative sampling for link prediction; contrastive learning for self-supervised pretraining.
+
+3) Expressivity and Oversmoothing
+   - 1-WL limitations; positional/structural encodings (LapPE, RWSE) increase expressivity.
+   - Oversmoothing and oversquashing in deep GNNs; remedies: residuals, jumping knowledge, dilation.
+
+4) Scalability
+   - Sampling: Neighbor sampling, GraphSAINT, Cluster-GCN to train on large graphs.
+   - Mini-batching with subgraph extraction; memory-efficient sparse ops; distributed training.
+
+5) Graph Embeddings
+   - Node2Vec/DeepWalk for unsupervised embeddings; graph2vec for whole-graph representations.
+   - Knowledge graph embeddings (TransE/RotatE/ComplEx) for relational reasoning.
+
+6) Heterogeneous and Dynamic Graphs
+   - Metapaths and relation-specific parameters (HAN, R-GCN) for heterogeneity.
+   - Temporal GNNs for evolving graphs; event-based models (TGAT, TGN).
+
+Evaluation and Practicalities:
+- Metrics: ROC-AUC/PR-AUC for link prediction; accuracy/F1 for node tasks; ROC-AUC for fraud.
+- Negative sampling strategies impact performance; ensure realistic train/test edge splits (chronological).
+- Robustness: Handle label leakage from structural shortcuts; add attribute noise for stress tests.
+
+Advanced Topics and Practical Guidance:
+1) Scaling to Industry Graphs
+   - Feature stores for node features; ANN for candidate neighbors; incremental updates.
+
+2) Explainers and Debugging
+   - GNNExplainer/PGM-Explainer identify influential subgraphs; sanity-check with counterfactual edges.
+
+3) Hybrid Models
+   - Combine GNN encoders with ranking/retrieval heads; two-stage systems in recommenders.
+
+Applications:
+- Fraud ring detection, molecule property prediction, knowledge graph completion, social moderation, supply chain risk.
+
+Practical Recipes:
+- Start with GraphSAGE + neighbor sampling; add attention for heterogeneity.
+- Use link prediction with negative sampling as a pretraining task.
+- For dynamic graphs, maintain time-windowed edges and retrain/refresh embeddings on schedule.
+
+Conclusion:
+Graph ML brings relational inductive biases that unlock performance on connected data. Success requires scalable sampling, careful evaluation splits, and integration with surrounding data systems.

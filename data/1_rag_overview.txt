@@ -1,0 +1,65 @@
+Title: Retrieval-Augmented Generation (RAG) — Concepts, Retrieval, and Reranking
+
+Summary: This document explains RAG: how external knowledge is retrieved and fused with a generator to reduce hallucinations and improve factuality. It covers chunking, embeddings, vector indexes (e.g., FAISS), retrievers, rerankers, and response synthesis patterns.
+
+Tags: rag, retrieval, reranking, embeddings, faiss, chunking, prompt, system-design
+
+---
+
+1) Why RAG
+- LLMs are limited by parametric memory; they hallucinate and lag on fresh facts.
+- RAG injects non-parametric memory via retrieval, improving factuality, controllability, and update cadence (just update the corpus).
+
+2) Core components
+- Ingestion: parse, clean, chunk, and embed documents; store vectors and metadata.
+- Retrieval: approximate nearest neighbor (ANN) search to find relevant chunks by vector similarity (cosine, inner product, L2).
+- Reranking: cross-encoders or LLM scoring to reorder retrieved passages by relevance.
+- Synthesis: prompt templates to condition the generator with citations, constraints, and chain-of-thought (when safe).
+
+3) Embeddings and vector stores
+- Sentence embeddings (e.g., all-MiniLM-L6-v2) are compact (384 dims) and accurate for semantic similarity.
+- Vector DB options: FAISS (local, fast), ScaNN, HNSWlib, pgvector/Postgres, Milvus, Qdrant, Weaviate.
+- Index choice depends on corpus size, latency goals, and update frequency.
+
+4) Chunking strategies
+- Aim for chunks that are semantically coherent and end on sentence boundaries.
+- Typical sizes: 150–400 tokens; with 20–30% overlap when structure is dense or for long-form QA.
+- Preserve metadata: title, section headers, URL/source, timestamps, page numbers.
+
+5) Retrieval patterns
+- Single-vector dense retrieval: efficient and strong baseline.
+- Hybrid search: combine dense + keyword (BM25) and optionally + filters (metadata) for precision.
+- Multi-vector per passage (ColBERT-style) for fine-grained matching when budget allows.
+- Query expansion: use LLMs or relevance feedback to add synonyms/entities.
+
+6) Reranking and verification
+- Cross-encoder reranking (e.g., ms-marco-MiniLM-L-6-v2) improves top-k precision with extra compute.
+- Lightweight LLM verification: ask the model to check claims against retrieved snippets and cite by ID.
+- Use passage-level de-duplication to avoid redundant evidence.
+
+7) Prompting for RAG
+- System constraints: "If unsure, say 'I don't know'"; "Cite sources by [doc_id:page]".
+- Context window budgeting: keep prompt + retrieved context within model limits; truncate by score.
+- Use templates for QA, summarization, and grounded generation.
+
+8) Evaluation
+- Retrieval: Recall@k, MRR, nDCG; qualitative checks on difficult queries.
+- End-to-end: groundedness, factuality, answer quality, and latency.
+- A/B compare against no-RAG baseline and ablate retriever/reranker components.
+
+9) Operations
+- Freshness: periodic re-embedding or incremental updates for changed docs.
+- Cost/latency: cache retrieval results; batch embed; quantize vectors; precompute reranker features for hot queries.
+- Monitoring: drift in query distributions; degraded recall@k; citation errors.
+
+10) Failure modes and mitigations
+- Off-topic retrieval: improve chunking and filters; fine-tune embeddings; add reranker.
+- Hallucinations: require citations; enforce extraction-first prompts; passage-attribution scoring.
+- Privacy: store locally (FAISS) or encrypt sensitive data; use on-prem models.
+
+Citations
+- Lewis et al., 2020. Retrieval-Augmented Generation for Knowledge-Intensive NLP. arXiv:2005.11401.
+- Karpukhin et al., 2020. Dense Passage Retrieval (DPR). arXiv:2004.04906.
+- Khattab & Zaharia, 2020. ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction. arXiv:2004.12832.
+- Wu et al., 2020. Zero-shot Dense Retrieval with Transformers. arXiv:2004.04057.
+- Nogueira & Cho, 2019. Passage Reranking with BERT. arXiv:1901.04085.

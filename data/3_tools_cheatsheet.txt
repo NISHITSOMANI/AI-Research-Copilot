@@ -1,0 +1,25 @@
+Title: Tools & Libraries Cheat Sheet — HF, Accelerate, W&B, Scikit-Learn
+
+Summary: Practical cheat sheet for common ML/NLP tooling with snippets and best practices.
+
+Tags: tools, huggingface, accelerate, wandb, scikit-learn, cheatsheet
+
+---
+
+1) Hugging Face Transformers
+- Load model/tokenizer; generation params (max_new_tokens, temperature, top_p); batching and device placement.
+
+2) Accelerate
+- Single-script multi-GPU/TPU training launcher; handles mixed precision, distributed data parallel.
+
+3) Weights & Biases (W&B)
+- Track metrics, artifacts, sweeps; log tables and confusion matrices; link to PRs/runs.
+
+4) Scikit-learn
+- Pipelines; ColumnTransformer; GridSearchCV/RandomizedSearchCV; model persistence with joblib.
+
+Citations
+- Hugging Face docs.
+- Accelerate docs.
+- W&B docs.
+- Scikit-learn user guide.
